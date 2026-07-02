@@ -1,0 +1,19 @@
+<%- include('../partials/top') %>
+<% const p = content.pages.opplaering; %>
+<%- include('../partials/sidehovud', { title: p.title, lead: null, image: p.headerImage }) %>
+
+<section class="seksjon">
+  <div class="ramme delt">
+    <div class="brodtekst">
+      <%- nl2p(p.body) %>
+    </div>
+    <div class="infoboks">
+      <h2>Vil du bli lærling hos oss?</h2>
+      <p>Send oss ein kort presentasjon av deg sjølv, så tek vi kontakt.</p>
+      <p><a class="knapp knapp-primar" href="/kontakt#kontaktskjema">Ta kontakt</a></p>
+    </div>
+  </div>
+</section>
+
+<%- include('../partials/cta-band') %>
+<%- include('../partials/bottom') %>

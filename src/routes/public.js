@@ -1,0 +1,199 @@
+const express = require('express');
+const store = require('../lib/store');
+const seo = require('../lib/seo');
+const mail = require('../lib/mail');
+const { formLimiter } = require('../lib/auth');
+
+const router = express.Router();
+
+function page(view, build) {
+  return (req, res, next) => {
+    try {
+      const content = store.getContent();
+      const url = seo.baseUrl(req);
+      const extra = build ? build(content, req) : {};
+      res.render(`pages/${view}`, {
+        jsonLd: seo.plumberJsonLd(content, url),
+        canonical: `${url}${req.path === '/' ? '/' : req.path}`,
+        ...extra,
+      });
+    } catch (err) {
+      next(err);
+    }
+  };
+}
+
+// --- 301-redirects frå gamle URL-ar (beheld SEO-verdi) ---
+const REDIRECTS = new Map([
+  ['/index', '/'],
+  ['/default.aspx', '/'],
+  ['/om-informasjonskapsler', '/informasjonskapslar'],
+  ['/comfortavisa', '/tenester'],
+  ['/kr-a-vik-eigedom-as', '/eigedom'],
+  ['/opplæringsbedrift', '/opplaeringsbedrift'],
+  ['/miljø-og-bærekraft', '/miljo-og-berekraft'],
+  ['/miljo-og-baerekraft', '/miljo-og-berekraft'],
+]);
+router.use((req, res, next) => {
+  let decoded;
+  try {
+    decoded = decodeURIComponent(req.path);
+  } catch {
+    decoded = req.path;
+  }
+  const target = REDIRECTS.get(decoded.replace(/\/$/, '') || '/');
+  if (target && target !== decoded) return res.redirect(301, target);
+  next();
+});
+
+router.get(
+  '/',
+  page('home', (content) => ({
+    seoTitle: content.pages.home.seoTitle,
+    seoDescription: content.pages.home.seoDescription,
+    galleryPreview: (content.gallery || []).slice(0, 8),
+  }))
+);
+
+router.get(
+  '/tenester',
+  page('tenester', (content) => ({
+    seoTitle: content.pages.tenester.seoTitle,
+    seoDescription: content.pages.tenester.seoDescription,
+  }))
+);
+
+router.get(
+  '/om-oss',
+  page('om-oss', (content) => ({
+    seoTitle: content.pages.omOss.seoTitle,
+    seoDescription: content.pages.omOss.seoDescription,
+  }))
+);
+
+router.get(
+  '/butikk-og-landbruk',
+  page('butikk', (content) => ({
+    seoTitle: content.pages.butikk.seoTitle,
+    seoDescription: content.pages.butikk.seoDescription,
+  }))
+);
+
+router.get(
+  '/opplaeringsbedrift',
+  page('opplaering', (content) => ({
+    seoTitle: content.pages.opplaering.seoTitle,
+    seoDescription: content.pages.opplaering.seoDescription,
+  }))
+);
+
+router.get('/eigedom', (req, res, next) => {
+  try {
+    const content = store.getContent();
+    const url = seo.baseUrl(req);
+    res.render('pages/eigedom', {
+      seoTitle: content.pages.eigedom.seoTitle,
+      seoDescription: content.pages.eigedom.seoDescription,
+      canonical: `${url}/eigedom`,
+      jsonLd: seo.eigedomJsonLd(content, url),
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.get(
+  '/miljo-og-berekraft',
+  page('miljo', (content) => ({
+    seoTitle: content.pages.miljo.seoTitle,
+    seoDescription: content.pages.miljo.seoDescription,
+  }))
+);
+
+router.get(
+  '/galleri',
+  page('galleri', (content) => ({
+    seoTitle: content.pages.galleri.seoTitle,
+    seoDescription: content.pages.galleri.seoDescription,
+  }))
+);
+
+router.get(
+  '/kontakt',
+  page('kontakt', (content, req) => ({
+    seoTitle: content.pages.kontakt.seoTitle,
+    seoDescription: content.pages.kontakt.seoDescription,
+    sent: req.query.sendt === '1',
+    formError: null,
+    formValues: {},
+  }))
+);
+
+router.post('/kontakt', formLimiter, (req, res, next) => {
+  try {
+    const content = store.getContent();
+    const url = seo.baseUrl(req);
+    const { navn, epost, telefon, melding, nettstad } = req.body;
+
+    // Honningkrukke: robotar fyller ut det skjulte feltet
+    if (nettstad) return res.redirect('/kontakt?sendt=1#kontaktskjema');
+
+    const errors = [];
+    const name = String(navn || '').trim().slice(0, 200);
+    const email = String(epost || '').trim().slice(0, 200);
+    const phone = String(telefon || '').trim().slice(0, 50);
+    const message = String(melding || '').trim().slice(0, 5000);
+    if (!name) errors.push('Skriv inn namnet ditt.');
+    if (!email && !phone) errors.push('Oppgi e-post eller telefon, slik at vi kan svare deg.');
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors.push('E-postadressa ser ikkje gyldig ut.');
+    if (!message) errors.push('Skriv ei melding.');
+
+    if (errors.length) {
+      return res.status(422).render('pages/kontakt', {
+        seoTitle: content.pages.kontakt.seoTitle,
+        seoDescription: content.pages.kontakt.seoDescription,
+        canonical: `${url}/kontakt`,
+        jsonLd: seo.plumberJsonLd(content, url),
+        sent: false,
+        formError: errors.join(' '),
+        formValues: { navn: name, epost: email, telefon: phone, melding: message },
+      });
+    }
+
+    const msg = {
+      name,
+      email,
+      phone,
+      message,
+      sentAt: new Date().toISOString(),
+      read: false,
+    };
+    store.addMessage(msg);
+    mail.notifyNewMessage(msg, content.site.name); // asynkron, valfri
+
+    return res.redirect('/kontakt?sendt=1#kontaktskjema');
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.get('/personvern', page('personvern', (content) => ({
+  seoTitle: 'Personvernerklæring – Kr. A. Vik AS',
+  seoDescription: 'Personvernerklæring for kravik.no – korleis vi behandlar personopplysningar.',
+})));
+
+router.get('/informasjonskapslar', page('informasjonskapslar', () => ({
+  seoTitle: 'Informasjonskapslar (cookies) – Kr. A. Vik AS',
+  seoDescription: 'Om informasjonskapslar på kravik.no og korleis du styrer samtykket ditt.',
+})));
+
+router.get('/sitemap.xml', (req, res) => {
+  const url = seo.baseUrl(req);
+  res.type('application/xml').send(seo.sitemapXml(store.getContent(), url));
+});
+
+router.get('/robots.txt', (req, res) => {
+  res.type('text/plain').send(seo.robotsTxt(seo.baseUrl(req)));
+});
+
+module.exports = router;

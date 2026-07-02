@@ -1,0 +1,51 @@
+<%- include('partials/atop', { tittel: 'Oversikt' }) %>
+
+<div class="admin-kort-rekke">
+  <a class="admin-kort" href="/admin/meldingar">
+    <strong><%= unread %></strong> ulesne meldingar
+    <span><%= total %> totalt i innboksen</span>
+  </a>
+  <a class="admin-kort" href="/admin/varsellinje">
+    <strong><%= alertBar.enabled ? 'PÅ' : 'AV' %></strong> varsellinje
+    <span><%= alertBar.enabled ? alertBar.text : 'Slå på ved ferie, kampanjar o.l.' %></span>
+  </a>
+  <a class="admin-kort" href="/admin/bilete">
+    <strong><%= (content.media || []).length %></strong> bilete
+    <span><%= (content.gallery || []).length %> i galleriet</span>
+  </a>
+</div>
+
+<h2>Status</h2>
+<table class="admin-tabell">
+  <tr>
+    <th scope="row">Varig lagring (GitHub-sync)</th>
+    <td>
+      <% if (sync.enabled) { %>
+        ✅ Aktiv mot <code><%= sync.repo %></code>
+        <% if (sync.lastError) { %><br />⚠️ Siste feil: <%= sync.lastError %><% } %>
+        <% if (sync.lastSyncAt) { %><br />Sist synkronisert: <%= sync.lastSyncAt %><% } %>
+      <% } else { %>
+        ⚠️ Ikkje sett opp – endringar overlever ikkje omstart av tenaren.
+        Sett <code>GITHUB_TOKEN</code> og <code>GITHUB_REPO</code>.
+      <% } %>
+    </td>
+  </tr>
+  <tr>
+    <th scope="row">E-postvarsling for skjema</th>
+    <td><%= mailConfigured ? '✅ Aktiv' : 'Ikkje sett opp – meldingar finn du uansett under «Meldingar».' %></td>
+  </tr>
+  <tr>
+    <th scope="row">Sist endra innhald</th>
+    <td><%= content.updatedAt || '–' %></td>
+  </tr>
+</table>
+
+<h2>Snarvegar</h2>
+<ul class="admin-snarvegar">
+  <li><a href="/admin/sider/home">Rediger framsida</a></li>
+  <li><a href="/admin/generelt">Endre kontaktinfo/opningstider</a></li>
+  <li><a href="/admin/bilete">Last opp bilete</a></li>
+  <li><a href="/admin/eksport">Last ned sikkerheitskopi av innhaldet</a></li>
+</ul>
+
+<%- include('partials/abot') %>
