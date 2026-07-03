@@ -1,4 +1,5 @@
-/* Admin: stadfesting før sletting/import + mal-knappar for varsellinja. */
+/* Admin: stadfesting før sletting/import, mal-knappar, adresseforslag og
+   «hugs kvar eg var»-oppførsel etter lagring. */
 (function () {
   'use strict';
   document.querySelectorAll('form[data-stadfest]').forEach(function (form) {
@@ -6,6 +7,44 @@
       if (!window.confirm(form.getAttribute('data-stadfest'))) e.preventDefault();
     });
   });
+
+  /* Etter lagring blir sida lasta på nytt – hugs difor kva blokker som var
+     opne og kor langt ned du var, og gjenopprett det (eingongs). */
+  var tilstandsNokkel = 'kravik-admin-tilstand:' + location.pathname;
+  try {
+    var lagraTilstand = JSON.parse(sessionStorage.getItem(tilstandsNokkel) || 'null');
+    if (lagraTilstand) {
+      sessionStorage.removeItem(tilstandsNokkel);
+      var alleDetaljar = document.querySelectorAll('details.admin-detalj');
+      (lagraTilstand.opne || []).forEach(function (i) {
+        if (alleDetaljar[i]) alleDetaljar[i].open = true;
+      });
+      if (typeof lagraTilstand.scroll === 'number') {
+        window.scrollTo(0, lagraTilstand.scroll);
+      }
+    }
+  } catch (e) { /* sessionStorage utilgjengeleg – heilt ok */ }
+
+  document.addEventListener('submit', function (e) {
+    if (e.defaultPrevented) return; // avbroten stadfesting
+    try {
+      var opne = [];
+      document.querySelectorAll('details.admin-detalj').forEach(function (d, i) {
+        if (d.open) opne.push(i);
+      });
+      sessionStorage.setItem(tilstandsNokkel, JSON.stringify({ opne: opne, scroll: window.scrollY }));
+    } catch (err) { /* ok */ }
+  });
+
+  /* Toast-meldinga («Lagra!») forsvinn av seg sjølv etter nokre sekund */
+  var toast = document.querySelector('.admin-flash-toast');
+  if (toast) {
+    setTimeout(function () {
+      toast.style.transition = 'opacity 0.4s ease';
+      toast.style.opacity = '0';
+      setTimeout(function () { toast.remove(); }, 450);
+    }, 6000);
+  }
 
   var malFelt = document.getElementById('hurtig-text');
   document.querySelectorAll('[data-mal]').forEach(function (knapp) {

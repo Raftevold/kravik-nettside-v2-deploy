@@ -85,6 +85,26 @@ code { background: #eee9de; padding: 0.1em 0.35em; border-radius: 5px; font-size
 .admin-flash-ok { background: #e8f3ec; border: 1.5px solid #2c7a4b; color: #1d5b37; }
 .admin-flash-feil { background: #fbeaea; border: 1.5px solid var(--fare); color: #8c1d17; }
 
+/* Lagra-meldinga som flytande toast, slik at ho er synleg same kvar du står på sida */
+.admin-flash-toast {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 300;
+  max-width: min(440px, calc(100vw - 2rem));
+  box-shadow: 0 10px 36px rgb(10 51 65 / 0.28);
+  animation: toast-inn 0.25s ease;
+}
+
+@keyframes toast-inn {
+  from { transform: translateY(10px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-flash-toast { animation: none; }
+}
+
 .admin-forklaring { color: var(--dus); max-width: 60ch; }
 
 .admin-kort-rekke { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; }
