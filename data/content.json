@@ -331,6 +331,12 @@
       "author": "Agathe Zoè Sunde Fagerland",
       "context": "Google-omtale",
       "rating": 5
+    },
+    {
+      "quote": "God service. Hyggelig betjening.",
+      "author": "Karen Seime",
+      "context": "Google-omtale",
+      "rating": 5
     }
   ],
   "gallery": [
@@ -859,5 +865,5 @@
       "alt": ""
     }
   ],
-  "updatedAt": "2026-07-03T16:58:52.373Z"
+  "updatedAt": "2026-07-03T16:58:53.458Z"
 }
