@@ -243,24 +243,7 @@
       "image": "hilde-2"
     }
   ],
-  "projects": [
-    {
-      "title": "Baderom renovering",
-      "category": "Baderom",
-      "place": "Stryn",
-      "year": "2020",
-      "description": "sjå her dette vart bra",
-      "cover": "product-studio-1-6-png-27",
-      "before": "product-studio-1-6-png-28",
-      "after": "product-studio-1-6-png-29",
-      "images": [
-        "product-studio-1-6-png-27",
-        "product-studio-1-6-png-28",
-        "product-studio-1-6-png-29"
-      ],
-      "id": "baderom-renovering"
-    }
-  ],
+  "projects": [],
   "properties": [
     {
       "title": "Øvre Fjellsmauet 8, 5018 BERGEN",
@@ -829,5 +812,5 @@
       "alt": ""
     }
   ],
-  "updatedAt": "2026-07-03T16:39:06.254Z"
+  "updatedAt": "2026-07-03T16:41:07.669Z"
 }
