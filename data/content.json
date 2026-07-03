@@ -238,7 +238,8 @@
       "name": "Hilde Eikenæs Vik",
       "role": "Dagleg leiar, Kr. A. Vik Eigedom AS",
       "phone": "918 61 480",
-      "email": "hilde@kravik.no"
+      "email": "hilde@kravik.no",
+      "image": "hilde-2"
     }
   ],
   "projects": [
@@ -827,5 +828,5 @@
       "alt": ""
     }
   ],
-  "updatedAt": "2026-07-03T13:12:52.308Z"
+  "updatedAt": "2026-07-03T13:13:11.455Z"
 }
