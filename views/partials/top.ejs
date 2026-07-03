@@ -24,6 +24,9 @@
   <% if (typeof jsonLd !== 'undefined' && jsonLd) { %>
   <script type="application/ld+json" nonce="<%= cspNonce %>"><%- JSON.stringify(jsonLd).replace(/</g, '\\u003c') %></script>
   <% } %>
+  <% if (plausibleDomain) { %>
+  <script defer data-domain="<%= plausibleDomain %>" src="https://plausible.io/js/script.js"></script>
+  <% } %>
 </head>
 <body>
   <a class="skip-link" href="#hovudinnhald">Hopp til hovudinnhaldet</a>

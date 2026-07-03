@@ -177,7 +177,43 @@ code { background: #eee9de; padding: 0.1em 0.35em; border-radius: 5px; font-size
 .admin-merke { background: var(--koppar); color: #fff; font-size: 0.75rem; padding: 0.1rem 0.6rem; border-radius: 999px; vertical-align: middle; }
 .admin-melding-kontakt { margin: 0.3rem 0 0; }
 
-.varsellinje-forhand { background: var(--koppar-mork); color: #fff; text-align: center; padding: 0.55rem 1rem; border-radius: 8px; font-weight: 600; max-width: 46rem; }
+.varsellinje-forhand { background: var(--koppar-mork); color: #fff; text-align: center; padding: 0.55rem 1rem; border-radius: 8px; font-weight: 600; max-width: 46rem; margin-bottom: 1rem; }
+
+.admin-merke-tilbod { background: var(--petrol); }
+.admin-merke-laerling { background: #2c7a4b; }
+
+/* Ferie-/driftsmodus + statistikk på dashbordet */
+.admin-malknappar { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
+
+.admin-stolpar {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 120px;
+  margin: 1rem 0 1.4rem;
+}
+
+.admin-stolpe-holdar {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+  min-width: 0;
+}
+
+.admin-stolpe {
+  display: block;
+  width: 100%;
+  max-width: 34px;
+  min-height: 2px;
+  background: var(--petrol);
+  border-radius: 4px 4px 0 0;
+}
+
+.admin-stolpe-dag { font-size: 0.7rem; color: var(--dus); margin-top: 0.25rem; }
+.admin-stats-tabell { max-width: 32rem; }
 
 /* Innlogging */
 .admin-login-kropp { display: grid; place-items: center; min-height: 100vh; padding: 1rem; }

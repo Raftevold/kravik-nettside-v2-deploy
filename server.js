@@ -1,12 +1,14 @@
 const { createApp } = require('./src/app');
 const store = require('./src/lib/store');
 const github = require('./src/lib/github');
+const stats = require('./src/lib/stats');
 
 const PORT = process.env.PORT || 3000;
 
 (async () => {
   try {
     await store.init();
+    stats.init();
   } catch (err) {
     // Utan gyldig innhald (eller utan vellukka GitHub-pull) skal prosessen
     // døy, slik at Render restartar / beheld førre fungerande instans i
@@ -26,6 +28,7 @@ const PORT = process.env.PORT || 3000;
     console.log('[shutdown] SIGTERM – drenerer synk-køa …');
     server.close();
     try {
+      await stats.flush(true);
       await github.flush();
     } catch {
       /* logga i github.js */

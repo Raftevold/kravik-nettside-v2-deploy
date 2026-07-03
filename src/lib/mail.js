@@ -18,19 +18,24 @@ if (configured) {
   });
 }
 
+const TYPE_LABELS = { tilbod: 'Førespurnad om tilbod', laerling: 'Lærling-søknad', kontakt: 'Melding frå kontaktskjemaet' };
+
 async function notifyNewMessage(msg, siteName) {
   if (!configured) return false;
   const to = process.env.CONTACT_EMAIL || process.env.SMTP_USER;
+  const label = TYPE_LABELS[msg.type] || TYPE_LABELS.kontakt;
   try {
     await transporter.sendMail({
       from: `"${siteName} – nettside" <${process.env.SMTP_USER}>`,
       to,
       replyTo: msg.email || undefined,
-      subject: `Ny melding frå kontaktskjemaet – ${msg.name}`,
+      subject: `${label} – ${msg.name}`,
       text: [
         `Namn: ${msg.name}`,
-        `E-post: ${msg.email}`,
+        `E-post: ${msg.email || '(ikkje oppgitt)'}`,
         `Telefon: ${msg.phone || '(ikkje oppgitt)'}`,
+        ...(msg.jobtype ? [`Type jobb: ${msg.jobtype}`] : []),
+        ...(msg.address ? [`Adresse/stad: ${msg.address}`] : []),
         '',
         msg.message,
         '',

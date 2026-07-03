@@ -82,9 +82,12 @@ router.get(
 
 router.get(
   '/opplaeringsbedrift',
-  page('opplaering', (content) => ({
+  page('opplaering', (content, req) => ({
     seoTitle: content.pages.opplaering.seoTitle,
     seoDescription: content.pages.opplaering.seoDescription,
+    sent: req.query.sendt === '1',
+    formError: null,
+    formValues: {},
   }))
 );
 
@@ -166,28 +169,35 @@ router.get(
     seoDescription: content.pages.kontakt.seoDescription,
     sent: req.query.sendt === '1',
     formError: null,
-    formValues: {},
+    formValues: { jobbtype: String(req.query.jobbtype || '').slice(0, 80) },
   }))
 );
+
+// Felles validering for skjema som skal til meldingsinnboksen
+function validateSubmission(body) {
+  const errors = [];
+  const name = String(body.navn || '').trim().slice(0, 200);
+  const email = String(body.epost || '').trim().slice(0, 200);
+  const phone = String(body.telefon || '').trim().slice(0, 50);
+  const message = String(body.melding || '').trim().slice(0, 5000);
+  if (!name) errors.push('Skriv inn namnet ditt.');
+  if (!email && !phone) errors.push('Oppgi e-post eller telefon, slik at vi kan svare deg.');
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors.push('E-postadressa ser ikkje gyldig ut.');
+  if (!message) errors.push('Skriv ei melding.');
+  return { errors, name, email, phone, message };
+}
 
 router.post('/kontakt', formLimiter, (req, res, next) => {
   try {
     const content = store.getContent();
     const url = seo.baseUrl(req);
-    const { navn, epost, telefon, melding, nettstad } = req.body;
 
     // Honningkrukke: robotar fyller ut det skjulte feltet
-    if (nettstad) return res.redirect('/kontakt?sendt=1#kontaktskjema');
+    if (req.body.nettstad) return res.redirect('/kontakt?sendt=1#kontaktskjema');
 
-    const errors = [];
-    const name = String(navn || '').trim().slice(0, 200);
-    const email = String(epost || '').trim().slice(0, 200);
-    const phone = String(telefon || '').trim().slice(0, 50);
-    const message = String(melding || '').trim().slice(0, 5000);
-    if (!name) errors.push('Skriv inn namnet ditt.');
-    if (!email && !phone) errors.push('Oppgi e-post eller telefon, slik at vi kan svare deg.');
-    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors.push('E-postadressa ser ikkje gyldig ut.');
-    if (!message) errors.push('Skriv ei melding.');
+    const { errors, name, email, phone, message } = validateSubmission(req.body);
+    const jobtype = String(req.body.jobbtype || '').trim().slice(0, 80);
+    const address = String(req.body.adresse || '').trim().slice(0, 200);
 
     if (errors.length) {
       return res.status(422).render('pages/kontakt', {
@@ -197,14 +207,17 @@ router.post('/kontakt', formLimiter, (req, res, next) => {
         jsonLd: seo.plumberJsonLd(content, url),
         sent: false,
         formError: errors.join(' '),
-        formValues: { navn: name, epost: email, telefon: phone, melding: message },
+        formValues: { navn: name, epost: email, telefon: phone, melding: message, jobbtype: jobtype, adresse: address },
       });
     }
 
     const msg = {
+      type: jobtype ? 'tilbod' : 'kontakt',
       name,
       email,
       phone,
+      jobtype,
+      address,
       message,
       sentAt: new Date().toISOString(),
       read: false,
@@ -213,6 +226,46 @@ router.post('/kontakt', formLimiter, (req, res, next) => {
     mail.notifyNewMessage(msg, content.site.name); // asynkron, valfri
 
     return res.redirect('/kontakt?sendt=1#kontaktskjema');
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Lærling-søknad frå opplæringssida – hamnar i same innboks, merkt «lærling»
+router.post('/opplaeringsbedrift', formLimiter, (req, res, next) => {
+  try {
+    const content = store.getContent();
+    const url = seo.baseUrl(req);
+
+    if (req.body.nettstad) return res.redirect('/opplaeringsbedrift?sendt=1#soknad');
+
+    const { errors, name, email, phone, message } = validateSubmission(req.body);
+
+    if (errors.length) {
+      return res.status(422).render('pages/opplaering', {
+        seoTitle: content.pages.opplaering.seoTitle,
+        seoDescription: content.pages.opplaering.seoDescription,
+        canonical: `${url}/opplaeringsbedrift`,
+        jsonLd: seo.plumberJsonLd(content, url),
+        sent: false,
+        formError: errors.join(' '),
+        formValues: { navn: name, epost: email, telefon: phone, melding: message },
+      });
+    }
+
+    const msg = {
+      type: 'laerling',
+      name,
+      email,
+      phone,
+      message,
+      sentAt: new Date().toISOString(),
+      read: false,
+    };
+    store.addMessage(msg);
+    mail.notifyNewMessage(msg, content.site.name);
+
+    return res.redirect('/opplaeringsbedrift?sendt=1#soknad');
   } catch (err) {
     next(err);
   }

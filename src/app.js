@@ -5,8 +5,13 @@ const express = require('express');
 const helmet = require('helmet');
 const compression = require('compression');
 const store = require('./lib/store');
+const stats = require('./lib/stats');
 const publicRoutes = require('./routes/public');
 const adminRoutes = require('./routes/admin');
+
+// Valfri, personvernvennleg webanalyse (utan cookies): sett PLAUSIBLE_DOMAIN
+// til domenet slik det er registrert hos plausible.io, så blir skriptet lagt til.
+const PLAUSIBLE_DOMAIN = process.env.PLAUSIBLE_DOMAIN || '';
 
 function escapeHtml(s) {
   return String(s ?? '')
@@ -52,11 +57,11 @@ function createApp() {
       contentSecurityPolicy: {
         directives: {
           defaultSrc: ["'self'"],
-          scriptSrc: ["'self'", (req, res) => `'nonce-${res.locals.cspNonce}'`],
+          scriptSrc: ["'self'", (req, res) => `'nonce-${res.locals.cspNonce}'`, ...(PLAUSIBLE_DOMAIN ? ['https://plausible.io'] : [])],
           styleSrc: ["'self'"],
           imgSrc: ["'self'", 'data:'],
           fontSrc: ["'self'"],
-          connectSrc: ["'self'"],
+          connectSrc: ["'self'", ...(PLAUSIBLE_DOMAIN ? ['https://plausible.io'] : [])],
           frameSrc: ['https://www.google.com'],
           objectSrc: ["'none'"],
           baseUri: ["'self'"],
@@ -71,6 +76,9 @@ function createApp() {
 
   app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 
+  // Anonym sideteljing (ingen cookies, ingen IP – sjå src/lib/stats.js)
+  app.use(stats.middleware);
+
   // Hjelpefunksjonar tilgjengelege i alle EJS-malar
   app.use((req, res, next) => {
     const content = store.getContent();
@@ -79,6 +87,7 @@ function createApp() {
     }
     res.locals.content = content;
     res.locals.assetV = ASSET_V;
+    res.locals.plausibleDomain = PLAUSIBLE_DOMAIN;
     res.locals.site = content.site;
     res.locals.alertBar = content.alert;
     res.locals.currentPath = req.path;

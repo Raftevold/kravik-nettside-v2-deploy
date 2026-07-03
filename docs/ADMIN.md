@@ -13,8 +13,8 @@
 
 | Meny | Innhald |
 |---|---|
-| **Oversikt** | Status, ulesne meldingar, snarvegar |
-| **Meldingar** | Innboks for kontaktskjemaet – les, merk, slett |
+| **Oversikt** | Ferie-/driftsmodus (slå på varsellinja med eitt klikk frå ferdige malar), besøksstatistikk, status og snarvegar |
+| **Meldingar** | Innboks for kontaktskjema, tilbodsførespurnadar (merkte «Tilbod» med jobbtype/adresse) og lærling-søknader (merkte «Lærling») |
 | **Sider og SEO** | Tekstane på kvar side + SEO-tittel og -beskriving |
 | **Tenester** | Legg til, endre, slette og flytte tenester |
 | **Kontaktpersonar** | Folk med telefon/e-post (vist på Om oss + Kontakt) |

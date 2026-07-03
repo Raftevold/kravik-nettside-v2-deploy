@@ -643,6 +643,7 @@ a.varsellinje:hover { background: #8a3a0f; color: var(--kvit); text-decoration: 
 
 .teneste h2 { font-size: 1.25rem; margin-bottom: 0.3rem; }
 .teneste p { margin: 0; color: var(--dus); }
+.teneste-cta { margin-top: 0.6rem !important; }
 .teneste .kort-ikon { flex-shrink: 0; }
 
 /* --------------------------------------------------------------------------

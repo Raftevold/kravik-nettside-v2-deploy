@@ -23,6 +23,22 @@
         </div>
         <div class="felt-rad">
           <div class="felt">
+            <label for="jobbtype">Kva gjeld det?</label>
+            <select id="jobbtype" name="jobbtype">
+              <option value="" <%= !formValues.jobbtype ? 'selected' : '' %>>(vel gjerne type jobb)</option>
+              <% for (const s of content.services) { %>
+              <option value="<%= s.title %>" <%= formValues.jobbtype === s.title ? 'selected' : '' %>><%= s.title %></option>
+              <% } %>
+              <option value="Anna" <%= formValues.jobbtype === 'Anna' ? 'selected' : '' %>>Anna</option>
+            </select>
+          </div>
+          <div class="felt">
+            <label for="adresse">Adresse/stad for jobben</label>
+            <input type="text" id="adresse" name="adresse" autocomplete="street-address" value="<%= formValues.adresse || '' %>" placeholder="T.d. Setrevegen 12, Stryn" />
+          </div>
+        </div>
+        <div class="felt-rad">
+          <div class="felt">
             <label for="epost">E-post</label>
             <input type="email" id="epost" name="epost" autocomplete="email" value="<%= formValues.epost || '' %>" aria-describedby="kontaktinfo-hint" />
           </div>

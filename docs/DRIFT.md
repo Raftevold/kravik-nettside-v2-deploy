@@ -10,6 +10,7 @@
 | `ADMIN_PASSWORD_HASH` | nei | Overstyrer passordet i `data/auth.json` (bcrypt-hash) |
 | `ADMIN_PASSWORD` | nei | Set startpassord ved første oppstart (blir hasha og lagra). Har ingen effekt om hash alt finst. Fjern frå Render etter bruk – ligg i klartekst der. |
 | `SYNC_MESSAGES` | nei | `true` = kontaktmeldingar blir òg synka til GitHub-repoet. Standard AV, sjå «Personvern i drift». |
+| `PLAUSIBLE_DOMAIN` | nei | Slår på Plausible-analyse (cookie-fri). Sett til domenet slik det er registrert hos plausible.io (t.d. `kravik.no`) – krev eige Plausible-abonnement. |
 | `GITHUB_TOKEN` | ja* | Token med `contents: read/write` på dette repoet |
 | `GITHUB_REPO` | ja* | T.d. `Raftevold/kravik-nettside` |
 | `GITHUB_BRANCH` | nei | Standard `main` |
@@ -31,6 +32,13 @@ Repository access: berre dette repoet → Permissions: Contents read/write).
 - **Flyktig filsystem:** løyst med GitHub-synk (sjå over).
 - **Deploy ved innhaldsendring:** `render.yaml` har `buildFilter.ignoredPaths:
   data/**`, så innhaldscommits frå admin utløyser IKKJE ny deploy.
+
+## Statistikk
+
+Sida tel sidevisingar anonymt (utan cookies/IP) og viser tala på
+admin-dashbordet. Tala ligg i `data/stats.json` og blir synka til GitHub maks
+kvar 30. minutt. For meir avansert analyse: opprett konto hos plausible.io og
+sett `PLAUSIBLE_DOMAIN` – skriptet og CSP-reglane blir lagde til automatisk.
 
 ## Sikkerheitskopi
 

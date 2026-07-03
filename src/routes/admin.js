@@ -6,6 +6,7 @@ const store = require('../lib/store');
 const auth = require('../lib/auth');
 const images = require('../lib/images');
 const mail = require('../lib/mail');
+const stats = require('../lib/stats');
 
 const router = express.Router();
 
@@ -118,6 +119,10 @@ router.get('/oversikt', (req, res) => {
     total: messages.length,
     sync: store.syncStatus(),
     mailConfigured: mail.configured,
+    statDays: stats.lastDays(14),
+    statTotal30: stats.totals(30),
+    statTop: stats.topPages(30, 6),
+    plausibleDomain: process.env.PLAUSIBLE_DOMAIN || '',
   });
 });
 
@@ -181,7 +186,9 @@ router.post('/varsellinje', async (req, res) => {
     link: str(req.body.link, 300),
   };
   await persist(req, store.saveContent(c, 'varsellinje'), c.alert.enabled ? 'Varsellinja er PÅ.' : 'Varsellinja er AV.');
-  res.redirect('/admin/varsellinje');
+  // Snarvegen på dashbordet sender med kvar ho vil tilbake
+  const tilbake = req.body.tilbake === 'oversikt' ? '/admin/oversikt' : '/admin/varsellinje';
+  res.redirect(tilbake);
 });
 
 // ---------- Sider (tekst + SEO) ----------
