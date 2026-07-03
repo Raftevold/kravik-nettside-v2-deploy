@@ -507,10 +507,11 @@ router.post('/eigedom/lagre', async (req, res) => {
   const c = store.getContent();
   const idx = Number(req.body.index);
   const existing = Number.isInteger(idx) && idx >= 0 && idx < c.properties.length ? c.properties[idx] : {};
+  const lat = Number.parseFloat(String(req.body.lat || '').replace(',', '.'));
+  const lng = Number.parseFloat(String(req.body.lng || '').replace(',', '.'));
   const item = {
     ...existing,
     title: str(req.body.title, 150),
-    image: str(req.body.image, 60),
     status: ['', 'ledig', 'utleigd'].includes(req.body.status) ? req.body.status : '',
     description: str(req.body.description, 5000),
     facts: str(req.body.facts, 2000)
@@ -523,9 +524,12 @@ router.post('/eigedom/lagre', async (req, res) => {
       })
       .filter((f) => f.label && f.value),
     mapEmbed: str(req.body.mapEmbed, 2000),
+    lat: Number.isFinite(lat) ? lat : undefined,
+    lng: Number.isFinite(lng) ? lng : undefined,
+    images: existing.images || [],
   };
   if (!item.title) {
-    flash(req, 'Tittel manglar.', 'feil');
+    flash(req, 'Adresse/tittel manglar.', 'feil');
     return res.redirect('/admin/eigedom');
   }
   if (!item.slug) {
@@ -542,6 +546,58 @@ router.post('/eigedom/slett', async (req, res) => {
   const idx = Number(req.body.index);
   if (Number.isInteger(idx) && idx >= 0 && idx < c.properties.length) c.properties.splice(idx, 1);
   await persist(req, store.saveContent(c, 'leilegheiter'), 'Sletta.');
+  res.redirect('/admin/eigedom');
+});
+
+router.post('/eigedom/last-opp', upload.array('bilete', 20), auth.verifyCsrf, async (req, res) => {
+  const c = store.getContent();
+  c.media = c.media || [];
+  const idx = Number(req.body.index);
+  if (!Number.isInteger(idx) || idx < 0 || idx >= c.properties.length) return res.redirect('/admin/eigedom');
+  const property = c.properties[idx];
+  property.images = property.images || [];
+  let count = 0;
+  for (const file of req.files || []) {
+    if (!/^image\/(jpeg|png|webp|avif|gif)$/.test(file.mimetype)) continue;
+    try {
+      const entry = await images.processUpload(file.buffer, file.originalname, c.media.map((m) => m.id));
+      c.media.push(entry);
+      property.images.push(entry.id);
+      if (!property.cover && !property.image) property.cover = entry.id;
+      count++;
+    } catch (err) {
+      console.error('[opplasting]', err.message);
+    }
+  }
+  await persist(req, store.saveContent(c, `leilegheitsbilete (${count} opplasta)`), count ? `${count} bilete lasta opp.` : 'Ingen bilete vart lasta opp – sjekk filformatet.');
+  res.redirect('/admin/eigedom');
+});
+
+router.post('/eigedom/framside', async (req, res) => {
+  const c = store.getContent();
+  const idx = Number(req.body.index);
+  const id = str(req.body.id, 60);
+  if (Number.isInteger(idx) && idx >= 0 && idx < c.properties.length) {
+    const p = c.properties[idx];
+    if ((p.images || []).includes(id) || p.image === id) {
+      p.cover = id;
+      await persist(req, store.saveContent(c, 'leilegheiter (framsidebilete)'), 'Framsidebiletet er sett.');
+    }
+  }
+  res.redirect('/admin/eigedom');
+});
+
+router.post('/eigedom/fjern-bilete', async (req, res) => {
+  const c = store.getContent();
+  const idx = Number(req.body.index);
+  const id = str(req.body.id, 60);
+  if (Number.isInteger(idx) && idx >= 0 && idx < c.properties.length) {
+    const p = c.properties[idx];
+    p.images = (p.images || []).filter((x) => x !== id);
+    if (p.image === id) p.image = '';
+    if (p.cover === id) p.cover = p.images[0] || p.image || '';
+    await persist(req, store.saveContent(c, 'leilegheitsbilete'), 'Biletet er teke ut av leilegheita (ligg framleis i biblioteket).');
+  }
   res.redirect('/admin/eigedom');
 });
 
@@ -593,6 +649,11 @@ router.post('/bilete/slett', async (req, res) => {
     if (p.cover === id) p.cover = p.images[0] || '';
     if (p.before === id) p.before = '';
     if (p.after === id) p.after = '';
+  }
+  for (const e of c.properties || []) {
+    e.images = (e.images || []).filter((x) => x !== id);
+    if (e.image === id) e.image = '';
+    if (e.cover === id) e.cover = e.images[0] || '';
   }
   images.deleteMedia(id);
   await persist(req, store.saveContent(c, 'sletta bilete'), 'Biletet er sletta.');
