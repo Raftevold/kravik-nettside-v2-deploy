@@ -337,6 +337,12 @@
       "author": "Karen Seime",
       "context": "Google-omtale",
       "rating": 5
+    },
+    {
+      "quote": "Kunnskapsrike og hjelpsomme",
+      "author": "Kjell Ove Bergset",
+      "context": "Google-omtale",
+      "rating": 5
     }
   ],
   "gallery": [
@@ -865,5 +871,5 @@
       "alt": ""
     }
   ],
-  "updatedAt": "2026-07-03T16:58:53.458Z"
+  "updatedAt": "2026-07-03T16:58:54.713Z"
 }
