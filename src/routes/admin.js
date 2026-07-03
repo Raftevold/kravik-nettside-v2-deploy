@@ -111,6 +111,9 @@ async function persist(req, savePromise, okMsg) {
   }
 }
 
+// ---------- Handbok ----------
+router.get('/handbok', (req, res) => res.render('admin/handbok', {}));
+
 // ---------- Oversikt ----------
 router.get('/oversikt', (req, res) => {
   const messages = store.getMessages();

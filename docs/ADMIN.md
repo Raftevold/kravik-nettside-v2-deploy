@@ -1,5 +1,8 @@
 # Administrasjonssida – brukarrettleiing
 
+> 💡 Det finst òg ei innebygd handbok direkte i admin: **Admin → ❓ Handbok**
+> – kort forklaring på alt, alltid oppdatert der du treng ho.
+
 ## Innlogging
 
 - **URL:** `https://<di-adresse>/admin` (lenkje «Logg inn» ligg òg nedst i footeren)

@@ -28,6 +28,7 @@
             ['/admin/varsellinje', 'Varsellinje'],
             ['/admin/generelt', 'Kontaktinfo m.m.'],
             ['/admin/innstillingar', 'Innstillingar'],
+            ['/admin/handbok', '❓ Handbok'],
           ]; %>
           <% for (const [href, label] of meny) { %>
           <li><a href="<%= href %>" <%- currentPath.startsWith(href) ? 'aria-current="page"' : '' %>><%= label %></a></li>
