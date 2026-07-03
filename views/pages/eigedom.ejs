@@ -35,6 +35,8 @@
         </div>
         <% } %>
         <h3><%= e.title %><% if (!framside && e.status) { %> <span class="status-merke status-<%= e.status %>"><%= e.status === 'ledig' ? 'Ledig' : 'Utleigd' %></span><% } %></h3>
+        <% const meta = [e.soverom ? e.soverom + ' soverom' : null, e.areal ? e.areal + ' m²' : null, e.ledigFra ? 'Ledig frå ' + e.ledigFra : null].filter(Boolean).join(' · '); %>
+        <% if (meta) { %><p class="eigedom-kort-meta"><%= meta %></p><% } %>
         <% if (e.slug) { %></a><% } %>
       </li>
       <% } %>

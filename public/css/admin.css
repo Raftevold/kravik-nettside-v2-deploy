@@ -188,6 +188,17 @@ code { background: #eee9de; padding: 0.1em 0.35em; border-radius: 5px; font-size
 
 .admin-miniatyr { margin-top: 0.5rem; border-radius: 8px; border: 1px solid var(--linje); }
 
+/* Fasilitetar-avkryssing (leilegheiter) */
+.admin-fasilitetar {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 0.35rem 1rem;
+  margin-top: 0.3rem;
+}
+
+.admin-fasilitet { display: flex; align-items: center; gap: 0.5rem; font-weight: 500; font-size: 0.95rem; }
+.admin-fasilitet input { width: 1.1rem; height: 1.1rem; accent-color: var(--koppar); }
+
 .admin-melding { background: #fff; border: 1px solid var(--linje); border-radius: var(--radius); padding: 1.2rem 1.4rem; margin-bottom: 0.9rem; }
 .admin-melding-ulesen { border-left: 5px solid var(--koppar); }
 .admin-melding header { display: flex; justify-content: space-between; gap: 1rem; align-items: baseline; flex-wrap: wrap; }

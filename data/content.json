@@ -267,7 +267,12 @@
       "image": "leilegheit-1",
       "status": "ledig",
       "description": "kom å sjå i kveld!",
-      "facts": [],
+      "facts": [
+        {
+          "label": "soverom",
+          "value": "2"
+        }
+      ],
       "mapEmbed": "",
       "lat": 60.396500996913225,
       "lng": 5.329906021928492,
@@ -877,5 +882,5 @@
       "alt": ""
     }
   ],
-  "updatedAt": "2026-07-03T16:58:55.841Z"
+  "updatedAt": "2026-07-03T21:35:56.512Z"
 }

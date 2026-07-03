@@ -645,7 +645,18 @@ a.varsellinje:hover { background: #8a3a0f; color: var(--kvit); text-decoration: 
 }
 
 .eigedom-kort img { width: 100%; aspect-ratio: 3/4; object-fit: cover; }
-.eigedom-kort h3 { font-size: 1rem; padding: 0.9rem 1.1rem; margin: 0; }
+.eigedom-kort h3 { font-size: 1rem; padding: 0.9rem 1.1rem 0.2rem; margin: 0; }
+.eigedom-kort-meta { margin: 0; padding: 0 1.1rem 0.9rem; color: var(--dus); font-size: 0.88rem; }
+.eigedom-kort a { text-decoration: none; }
+.eigedom-kort a h3 { text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 3px; }
+
+/* Fasilitetar på detaljsida – fleire kolonnar når det er plass */
+.fasilitetar-liste {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0 1.5rem;
+  max-width: 44rem;
+}
 
 .kontaktkort {
   background: var(--papir);

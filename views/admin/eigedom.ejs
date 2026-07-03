@@ -33,8 +33,48 @@ Tekst og kontaktinfo for hovudsida endrar du under <a href="/admin/sider/eigedom
     </div>
     <div class="felt"><label for="e-description-<%= i %>">Beskriving (tom linje = nytt avsnitt)</label>
       <textarea id="e-description-<%= i %>" name="description" rows="4"><%= e.description || '' %></textarea></div>
-    <div class="felt"><label for="e-facts-<%= i %>">Nøkkelinfo (éi linje per punkt: <code>Namn|Verdi</code>, t.d. <code>Soverom|2</code>)</label>
-      <textarea id="e-facts-<%= i %>" name="facts" rows="3"><%= (e.facts || []).map(f => `${f.label}|${f.value}`).join('\n') %></textarea></div>
+
+    <fieldset>
+      <legend>Nøkkelinfo <span class="felt-hint-inline">(alt er valfritt – berre det du fyller ut blir vist)</span></legend>
+      <div class="felt-rad">
+        <div class="felt"><label for="e-soverom-<%= i %>">Soverom</label>
+          <select id="e-soverom-<%= i %>" name="soverom">
+            <option value="" <%= !e.soverom ? 'selected' : '' %>>–</option>
+            <% for (const s of ['1','2','3','4','5','6','7+']) { %><option value="<%= s %>" <%= e.soverom === s ? 'selected' : '' %>><%= s %></option><% } %>
+          </select></div>
+        <div class="felt"><label for="e-areal-<%= i %>">Areal (m²)</label>
+          <input type="number" id="e-areal-<%= i %>" name="areal" min="1" value="<%= e.areal ?? '' %>" placeholder="t.d. 60" /></div>
+        <div class="felt"><label for="e-leige-<%= i %>">Månadsleige (kr)</label>
+          <input type="number" id="e-leige-<%= i %>" name="leige" min="1" value="<%= e.leige ?? '' %>" placeholder="t.d. 12000" /></div>
+      </div>
+      <div class="felt-rad">
+        <div class="felt"><label for="e-moblert-<%= i %>">Møblert</label>
+          <select id="e-moblert-<%= i %>" name="moblert">
+            <option value="" <%= !e.moblert ? 'selected' : '' %>>–</option>
+            <option value="moblert" <%= e.moblert === 'moblert' ? 'selected' : '' %>>Møblert</option>
+            <option value="delvis" <%= e.moblert === 'delvis' ? 'selected' : '' %>>Delvis møblert</option>
+            <option value="umoblert" <%= e.moblert === 'umoblert' ? 'selected' : '' %>>Umøblert</option>
+          </select></div>
+        <div class="felt"><label for="e-dyrehold-<%= i %>">Dyrehald</label>
+          <select id="e-dyrehold-<%= i %>" name="dyrehold">
+            <option value="" <%= !e.dyrehold ? 'selected' : '' %>>–</option>
+            <option value="ja" <%= e.dyrehold === 'ja' ? 'selected' : '' %>>Tillate</option>
+            <option value="nei" <%= e.dyrehold === 'nei' ? 'selected' : '' %>>Ikkje tillate</option>
+          </select></div>
+        <div class="felt"><label for="e-ledigfra-<%= i %>">Ledig frå</label>
+          <input id="e-ledigfra-<%= i %>" name="ledigFra" value="<%= e.ledigFra || '' %>" placeholder="t.d. 1. august 2026 / etter avtale" /></div>
+      </div>
+      <div class="felt">
+        <span class="felt-hint" style="font-weight:650">Fasilitetar</span>
+        <div class="admin-fasilitetar">
+          <% for (const f of FASILITETAR) { %>
+          <label class="admin-fasilitet"><input type="checkbox" name="fasilitetar" value="<%= f %>" <%= (e.fasilitetar || []).includes(f) ? 'checked' : '' %> /> <%= f %></label>
+          <% } %>
+        </div>
+      </div>
+      <div class="felt"><label for="e-facts-<%= i %>">Anna info (valfritt – éi linje per punkt: <code>Namn|Verdi</code>, t.d. <code>Etasje|2.</code>)</label>
+        <textarea id="e-facts-<%= i %>" name="facts" rows="2"><%= (e.facts || []).map(f => `${f.label}|${f.value}`).join('\n') %></textarea></div>
+    </fieldset>
     <div class="felt"><label for="e-map-<%= i %>">Overstyr kartet manuelt (valfritt – Google Maps innbyggings-URL)</label>
       <textarea id="e-map-<%= i %>" name="mapEmbed" rows="2"><%= e.mapEmbed || '' %></textarea></div>
     <button type="submit" class="knapp knapp-primar">Lagre</button>

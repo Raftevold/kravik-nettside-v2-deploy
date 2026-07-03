@@ -507,7 +507,23 @@ router.post('/prosjekt/fjern-bilete', async (req, res) => {
 });
 
 // ---------- Eigedom (leilegheiter) ----------
-router.get('/eigedom', (req, res) => res.render('admin/eigedom', {}));
+// Fasilitetar ein kan krysse av for (inspirert av finn.no sine filter)
+const FASILITETAR = [
+  'Balkong/terrasse',
+  'Garasje/P-plass',
+  'Heis',
+  'Lademoglegheit',
+  'Peis/eldstad',
+  'Utsikt',
+  'Turterreng',
+  'Fellesvaskeri',
+  'Breiband',
+  'Aircondition',
+  'Alarm',
+  'Vaktmeisterteneste',
+];
+
+router.get('/eigedom', (req, res) => res.render('admin/eigedom', { FASILITETAR }));
 
 router.post('/eigedom/lagre', async (req, res) => {
   const c = store.getContent();
@@ -515,11 +531,22 @@ router.post('/eigedom/lagre', async (req, res) => {
   const existing = Number.isInteger(idx) && idx >= 0 && idx < c.properties.length ? c.properties[idx] : {};
   const lat = Number.parseFloat(String(req.body.lat || '').replace(',', '.'));
   const lng = Number.parseFloat(String(req.body.lng || '').replace(',', '.'));
+  const areal = Number.parseInt(req.body.areal, 10);
+  const leige = Number.parseInt(String(req.body.leige || '').replace(/[\s.]/g, ''), 10);
+  const valgteFasilitetar = [].concat(req.body.fasilitetar || []).filter((f) => FASILITETAR.includes(f));
   const item = {
     ...existing,
     title: str(req.body.title, 150),
     status: ['', 'ledig', 'utleigd'].includes(req.body.status) ? req.body.status : '',
     description: str(req.body.description, 5000),
+    // Strukturert nøkkelinfo – alt valfritt
+    soverom: ['', '1', '2', '3', '4', '5', '6', '7+'].includes(req.body.soverom) && req.body.soverom ? req.body.soverom : undefined,
+    areal: Number.isFinite(areal) && areal > 0 ? areal : undefined,
+    leige: Number.isFinite(leige) && leige > 0 ? leige : undefined,
+    moblert: ['moblert', 'delvis', 'umoblert'].includes(req.body.moblert) ? req.body.moblert : undefined,
+    dyrehold: ['ja', 'nei'].includes(req.body.dyrehold) ? req.body.dyrehold : undefined,
+    ledigFra: str(req.body.ledigFra, 60) || undefined,
+    fasilitetar: valgteFasilitetar.length ? valgteFasilitetar : undefined,
     facts: str(req.body.facts, 2000)
       .split('\n')
       .map((l) => l.trim())
