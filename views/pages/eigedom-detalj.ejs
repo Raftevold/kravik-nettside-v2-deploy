@@ -1,11 +1,12 @@
 <%- include('../partials/top') %>
 <% const e = property; const pg = content.pages.eigedom; %>
 
+<% const framsideForStatus = e.cover || e.image; %>
 <div class="sidehovud sidehovud-utan-bilete">
   <div class="ramme sidehovud-inner">
     <p class="sidehovud-sti"><a href="/eigedom">← Alle leilegheiter</a></p>
     <h1><%= e.title %></h1>
-    <% if (e.status) { %>
+    <% if (e.status && !framsideForStatus) { %>
     <p class="sidehovud-ingress"><span class="status-merke status-<%= e.status %>"><%= e.status === 'ledig' ? 'Ledig' : 'Utleigd' %></span></p>
     <% } %>
   </div>
@@ -18,10 +19,13 @@
          const fleireBilete = [...new Set([...(e.images || []), ...(e.image ? [e.image] : [])])].filter((id) => id !== framside);
          const kartSrc = e.mapEmbed || (e.lat && e.lng ? `https://www.google.com/maps?q=${e.lat},${e.lng}&z=16&output=embed` : ''); %>
       <% if (framside) { %>
-      <button type="button" class="galleri-knapp eigedom-hovudknapp" data-lysbilete="<%= mediaUrl(framside, 'lg') %>" data-alt="<%= mediaAlt(framside) || e.title %>">
-        <img class="eigedom-hovudbilete" src="<%= mediaUrl(framside, 'lg') %>" srcset="<%= srcset(framside) %>" sizes="(min-width: 800px) 60vw, 95vw" alt="<%= mediaAlt(framside) || e.title %>" />
-        <span class="sr-only">Vis biletet i full storleik</span>
-      </button>
+      <div class="eigedom-hovudholdar">
+        <button type="button" class="galleri-knapp eigedom-hovudknapp" data-lysbilete="<%= mediaUrl(framside, 'lg') %>" data-alt="<%= mediaAlt(framside) || e.title %>">
+          <img class="eigedom-hovudbilete" src="<%= mediaUrl(framside, 'lg') %>" srcset="<%= srcset(framside) %>" sizes="(min-width: 800px) 60vw, 95vw" alt="<%= mediaAlt(framside) || e.title %>" />
+          <span class="sr-only">Vis biletet i full storleik</span>
+        </button>
+        <% if (e.status) { %><span class="status-merke status-merke-bilete status-<%= e.status %>"><%= e.status === 'ledig' ? 'Ledig' : 'Utleigd' %></span><% } %>
+      </div>
       <% } %>
       <% if (fleireBilete.length) { %>
       <ul class="galleri-rutenett eigedom-galleri">
