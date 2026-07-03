@@ -294,7 +294,13 @@
       "image": "leilegheit-6"
     }
   ],
-  "testimonials": [],
+  "testimonials": [
+    {
+      "quote": "Heilt fantastisk samarbeid! Renovering av bad. Resultatet vart fantastisk!",
+      "author": "Adrian Lefdal",
+      "context": "Oppussing"
+    }
+  ],
   "gallery": [
     {
       "image": "galleri-01"
@@ -773,5 +779,5 @@
       "alt": ""
     }
   ],
-  "updatedAt": "2026-07-03T12:23:29.250Z"
+  "updatedAt": "2026-07-03T12:29:00.962Z"
 }
