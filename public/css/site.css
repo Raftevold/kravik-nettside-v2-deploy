@@ -114,6 +114,13 @@ a:hover { color: var(--koppar-mork); }
   padding-inline: clamp(1rem, 4vw, 2rem);
 }
 
+/* Tryggleiksnett mot horisontal scroll på mobil: klipp stray overflow (t.d.
+   frå omtale-karusellen). «clip» lagar ikkje ein scroll-container og bryt
+   difor ikkje den sticky headeren, som uansett ligg utanfor <main>. */
+main {
+  overflow-x: clip;
+}
+
 /* --------------------------------------------------------------------------
    Knappar
    -------------------------------------------------------------------------- */
@@ -676,6 +683,9 @@ a.varsellinje:hover { background: #8a3a0f; color: var(--kvit); text-decoration: 
 .referansar-band {
   display: flex;
   overflow-x: auto;
+  /* Hindrar at horisontalt sveip på karusellen «gummistrikk-drar» heile
+     sida på iOS (som elles avslører kvitt bak sida). */
+  overscroll-behavior-x: contain;
   scroll-snap-type: x mandatory;
   gap: 1.1rem;
   padding-bottom: 0.6rem;

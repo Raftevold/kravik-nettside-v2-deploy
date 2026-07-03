@@ -86,7 +86,8 @@
       "headerImage": "header-kontakt",
       "intro": "I Visnesvegen 7 i Stryn finn du både Comfort-butikken vår og landbruksavdelinga. Her møter du fagfolk bak disken – rørleggar og butikk på same plass.",
       "comfortText": "Som del av Comfort-kjeden har vi butikk med utstyr til bad og VVS. Treng du hjelp til å planlegge badet, hjelper vi deg med teikning og løysingsval.",
-      "landbrukText": "Landbruksavdelinga i Stryn fører maskiner og varer frå mellom anna Husqvarna og Kellfri – innom oss finn du utstyr til gard, skog og hage."
+      "landbrukText": "Landbruksavdelinga i Stryn fører maskiner og varer frå mellom anna Husqvarna og Kellfri – innom oss finn du utstyr til gard, skog og hage.",
+      "image": "header-om-oss"
     },
     "opplaering": {
       "title": "Opplæringsbedrift",
@@ -244,20 +245,19 @@
   ],
   "projects": [
     {
-      "title": "Baderom renovering",
+      "title": "Renovering bad",
       "category": "Baderom",
       "place": "Stryn",
       "year": "2020",
-      "description": "sjå her dette vart bra",
-      "cover": "product-studio-1-6-png-27",
-      "before": "product-studio-1-6-png-28",
-      "after": "product-studio-1-6-png-29",
+      "description": "Oppussing",
+      "cover": "nyttt-bad",
+      "before": "gammelt-bad-2",
+      "after": "nyttt-bad",
       "images": [
-        "product-studio-1-6-png-27",
-        "product-studio-1-6-png-28",
-        "product-studio-1-6-png-29"
+        "nyttt-bad",
+        "gammelt-bad-2"
       ],
-      "id": "baderom-renovering"
+      "id": "renovering-bad"
     }
   ],
   "properties": [
@@ -311,7 +311,44 @@
     {
       "quote": "Heilt fantastisk samarbeid! Renovering av bad. Resultatet vart fantastisk!",
       "author": "Adrian Lefdal",
-      "context": "Oppussing"
+      "context": "Oppussing",
+      "rating": 5
+    },
+    {
+      "quote": "Fikk i dag første klasses service av comfort stryn ved stian tusen hjertelig takk for glimrende utført arbeid mvh Eddie stryn bilpleie",
+      "author": "Eddie Doksæter",
+      "context": "Google-omtale",
+      "rating": 5
+    },
+    {
+      "quote": "Heilt fantastiske 👍",
+      "author": "Are Tenden",
+      "context": "Google-omtale",
+      "rating": 5
+    },
+    {
+      "quote": "Veldig hyggelige ansatte fra dama på sentralen til rørleggeren som kom og ordnet opp. Alt i alt god service.",
+      "author": "Agathe Zoè Sunde Fagerland",
+      "context": "Google-omtale",
+      "rating": 5
+    },
+    {
+      "quote": "God service. Hyggelig betjening.",
+      "author": "Karen Seime",
+      "context": "Google-omtale",
+      "rating": 5
+    },
+    {
+      "quote": "Kunnskapsrike og hjelpsomme",
+      "author": "Kjell Ove Bergset",
+      "context": "Google-omtale",
+      "rating": 5
+    },
+    {
+      "quote": "Ein god butikk å handle hagemaskiner i.",
+      "author": "Ådne Sølvberg",
+      "context": "Google-omtale",
+      "rating": 4
     }
   ],
   "gallery": [
@@ -826,7 +863,19 @@
       "w": 281,
       "h": 400,
       "alt": ""
+    },
+    {
+      "id": "nyttt-bad",
+      "w": 1408,
+      "h": 768,
+      "alt": ""
+    },
+    {
+      "id": "gammelt-bad-2",
+      "w": 1408,
+      "h": 768,
+      "alt": ""
     }
   ],
-  "updatedAt": "2026-07-03T13:13:26.198Z"
+  "updatedAt": "2026-07-03T16:58:55.841Z"
 }
