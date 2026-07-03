@@ -121,7 +121,7 @@ code { background: #eee9de; padding: 0.1em 0.35em; border-radius: 5px; font-size
 .felt input, .felt textarea, .felt select {
   font: inherit;
   padding: 0.55rem 0.8rem;
-  border: 1.5px solid #b5bfc2;
+  border: 1.5px solid #5f7178;
   border-radius: 8px;
   width: 100%;
   background: #fff;

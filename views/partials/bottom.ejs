@@ -24,11 +24,11 @@
         <h2 class="botn-tittel">Snarvegar</h2>
         <ul class="botn-lenker">
           <li><a href="/tenester">Tenester</a></li>
+          <li><a href="/prosjekt">Prosjekt og galleri</a></li>
           <li><a href="/butikk-og-landbruk">Butikk og landbruk</a></li>
           <li><a href="/opplaeringsbedrift">Bli lærling</a></li>
           <li><a href="/eigedom">Leilegheit til leige</a></li>
           <li><a href="/miljo-og-berekraft">Miljø og berekraft</a></li>
-          <li><a href="/galleri">Galleri</a></li>
         </ul>
       </div>
       <div>
@@ -59,7 +59,7 @@
     </div>
   </footer>
 
-  <div class="mobil-cta" aria-hidden="false">
+  <div class="mobil-cta">
     <a class="knapp knapp-primar" href="<%= telHref(site.phone) %>">Ring <%= site.phone %></a>
     <a class="knapp knapp-sekundar" href="/kontakt#kontaktskjema">Send melding</a>
   </div>
@@ -84,6 +84,6 @@
     <img src="" alt="" />
   </dialog>
 
-  <script src="/js/site.js" defer></script>
+  <script src="/js/site.js?v=<%= assetV %>" defer></script>
 </body>
 </html>

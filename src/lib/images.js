@@ -24,10 +24,14 @@ function slugify(name) {
     .slice(0, 40) || 'bilete';
 }
 
+// Reserverer id-en synkront, slik at to samtidige opplastingar med same
+// filnamn ikkje kan få same id (sharp-prosesseringa tek fleire hundre ms).
+const inFlight = new Set();
+
 function uniqueId(base, existingIds) {
   let id = base;
   let i = 2;
-  while (existingIds.includes(id)) {
+  while (existingIds.includes(id) || inFlight.has(id) || store.uploadExists(`${id}-lg.webp`)) {
     id = `${base}-${i++}`;
   }
   return id;
@@ -35,6 +39,15 @@ function uniqueId(base, existingIds) {
 
 async function processUpload(buffer, originalName, existingIds) {
   const id = uniqueId(slugify(originalName), existingIds);
+  inFlight.add(id);
+  try {
+    return await doProcess(buffer, id);
+  } finally {
+    inFlight.delete(id);
+  }
+}
+
+async function doProcess(buffer, id) {
   const image = sharp(buffer, { failOn: 'none' }).rotate();
   const meta = await image.metadata();
   if (!meta.width || !meta.height) throw new Error('Fila ser ikkje ut til å vere eit gyldig bilete.');

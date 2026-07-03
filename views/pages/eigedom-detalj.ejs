@@ -1,0 +1,55 @@
+<%- include('../partials/top') %>
+<% const e = property; const pg = content.pages.eigedom; %>
+
+<div class="sidehovud sidehovud-utan-bilete">
+  <div class="ramme sidehovud-inner">
+    <p class="sidehovud-sti"><a href="/eigedom">← Alle leilegheiter</a></p>
+    <h1><%= e.title %></h1>
+    <% if (e.status) { %>
+    <p class="sidehovud-ingress"><span class="status-merke status-<%= e.status %>"><%= e.status === 'ledig' ? 'Ledig' : 'Utleigd' %></span></p>
+    <% } %>
+  </div>
+</div>
+
+<section class="seksjon">
+  <div class="ramme delt">
+    <div>
+      <% if (e.image) { %>
+      <img class="eigedom-hovudbilete" src="<%= mediaUrl(e.image, 'lg') %>" srcset="<%= srcset(e.image) %>" sizes="(min-width: 800px) 60vw, 95vw" alt="<%= mediaAlt(e.image) || e.title %>" />
+      <% } %>
+      <div class="brodtekst">
+        <% if (e.description) { %>
+        <%- nl2p(e.description) %>
+        <% } else { %>
+        <p>Ta kontakt for meir informasjon om denne leilegheita.</p>
+        <% } %>
+      </div>
+      <% if (e.facts && e.facts.length) { %>
+      <h2>Nøkkelinfo</h2>
+      <dl class="opningstider-liste eigedom-fakta">
+        <% for (const f of e.facts) { %><div><dt><%= f.label %></dt><dd><%= f.value %></dd></div><% } %>
+      </dl>
+      <% } %>
+      <% if (e.mapEmbed) { %>
+      <h2>Kart</h2>
+      <div class="kart-holdar" data-kart-src="<%= e.mapEmbed %>">
+        <div class="kart-plasshaldar">
+          <p>Kartet blir levert av Google Maps og blir først lasta når du samtykkjer til eksternt innhald.</p>
+          <button type="button" class="knapp knapp-sekundar" data-last-kart>Vis kart</button>
+        </div>
+      </div>
+      <% } %>
+    </div>
+    <div class="kontaktkort">
+      <h2>Interessert i å leige?</h2>
+      <% if (pg.contactImage) { %>
+      <img src="<%= mediaUrl(pg.contactImage, 'sm') %>" alt="<%= pg.contactName %>" width="120" height="120" loading="lazy" />
+      <% } %>
+      <p><strong><%= pg.contactName %></strong><br /><%= pg.contactRole %>, Kr. A. Vik Eigedom AS</p>
+      <p><a href="<%= telHref(pg.contactPhone) %>"><%- include('../partials/icon', { name: 'telefon' }) %> <%= pg.contactPhone %></a><br />
+      <a href="mailto:<%= pg.contactEmail %>?subject=<%= encodeURIComponent('Leige: ' + e.title) %>"><%- include('../partials/icon', { name: 'epost' }) %> <%= pg.contactEmail %></a></p>
+    </div>
+  </div>
+</section>
+
+<%- include('../partials/bottom') %>

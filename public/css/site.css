@@ -715,7 +715,7 @@ a.varsellinje:hover { background: #8a3a0f; color: var(--kvit); text-decoration: 
 .felt select {
   font: inherit;
   padding: 0.7rem 0.9rem;
-  border: 1.5px solid #b5bfc2;
+  border: 1.5px solid #5f7178; /* ≥3:1 mot kvit (WCAG 1.4.11) */
   border-radius: 10px;
   background: var(--kvit);
   color: var(--blekk);
@@ -868,6 +868,155 @@ a.varsellinje:hover { background: #8a3a0f; color: var(--kvit); text-decoration: 
 .samtykke-boks h2 { font-size: 1.1rem; margin-bottom: 0.4rem; }
 .samtykke-boks p { font-size: 0.95rem; margin-bottom: 1rem; }
 .samtykke-knappar { display: flex; flex-wrap: wrap; gap: 0.7rem; }
+
+/* --------------------------------------------------------------------------
+   Prosjekt
+   -------------------------------------------------------------------------- */
+.prosjekt-rutenett {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
+  gap: 1.25rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.prosjekt-kort a {
+  display: block;
+  background: var(--kvit);
+  border: 1px solid var(--linje);
+  border-radius: var(--radius);
+  overflow: hidden;
+  text-decoration: none;
+  color: var(--blekk);
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.prosjekt-kort a:hover { box-shadow: var(--skugge); transform: translateY(-2px); color: var(--blekk); }
+.prosjekt-kort img { width: 100%; aspect-ratio: 4/3; object-fit: cover; }
+.prosjekt-kort-tekst { padding: 1.1rem 1.3rem 1.3rem; }
+.prosjekt-kort h3 { margin: 0.15rem 0 0; }
+.prosjekt-meta { margin: 0; color: var(--dus); font-size: 0.9rem; font-weight: 650; text-transform: uppercase; letter-spacing: 0.04em; }
+.prosjekt-merke { margin: 0.5rem 0 0; color: var(--koppar-mork); font-weight: 700; font-size: 0.92rem; }
+.prosjekt-galleri-tittel { margin-top: 2.5rem; }
+.sidehovud-sti { margin: 0 0 0.8rem; }
+.sidehovud-sti a { color: #c9dae0; }
+
+/* Før/etter-glidar */
+.foretter {
+  position: relative;
+  max-width: 900px;
+  margin: 0 auto;
+  border-radius: var(--radius);
+  overflow: hidden;
+  isolation: isolate;
+  touch-action: none;
+}
+
+.foretter img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4/3;
+  object-fit: cover;
+}
+
+.foretter-for {
+  position: absolute;
+  inset: 0;
+  clip-path: inset(0 calc(100% - var(--pos, 50%)) 0 0);
+}
+
+.foretter-linje {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--pos, 50%);
+  width: 3px;
+  background: var(--kvit);
+  transform: translateX(-50%);
+  box-shadow: 0 0 8px rgb(0 0 0 / 0.5);
+  pointer-events: none;
+}
+
+.foretter-linje::after {
+  content: '⇄';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--kvit);
+  color: var(--petrol-mork);
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 1.1rem;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.35);
+}
+
+.foretter-merke {
+  position: absolute;
+  top: 0.9rem;
+  background: rgb(10 51 65 / 0.82);
+  color: var(--kvit);
+  font-weight: 700;
+  font-size: 0.88rem;
+  padding: 0.25rem 0.8rem;
+  border-radius: 999px;
+  pointer-events: none;
+}
+
+.foretter-merke-for { left: 0.9rem; }
+.foretter-merke-etter { right: 0.9rem; }
+
+.foretter-slider {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: ew-resize;
+}
+
+.foretter-slider:focus-visible ~ .foretter-linje,
+.foretter:has(.foretter-slider:focus-visible) .foretter-linje {
+  outline: var(--fokus);
+}
+
+.foretter:has(.foretter-slider:focus-visible) {
+  outline: var(--fokus);
+  outline-offset: 3px;
+}
+
+.foretter-hjelp {
+  text-align: center;
+  color: var(--dus);
+  font-size: 0.95rem;
+  margin: 0.8rem 0 2.5rem;
+}
+
+/* Eigedom-detalj */
+.eigedom-hovudbilete { border-radius: var(--radius); margin-bottom: 1.5rem; }
+.eigedom-fakta { max-width: 28rem; }
+
+.status-merke {
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0.15rem 0.7rem;
+  border-radius: 999px;
+  vertical-align: middle;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.status-ledig { background: #e8f3ec; color: #1d5b37; border: 1px solid #2c7a4b; }
+.status-utleigd { background: #f1efe9; color: #51626a; border: 1px solid #b5bfc2; }
+.sidehovud .status-ledig { background: #2c7a4b; color: #fff; border-color: #2c7a4b; }
+.sidehovud .status-utleigd { background: rgb(255 255 255 / 0.16); color: #fff; border-color: rgb(255 255 255 / 0.4); }
 
 /* --------------------------------------------------------------------------
    Diverse

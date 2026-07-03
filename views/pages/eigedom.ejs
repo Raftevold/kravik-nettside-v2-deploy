@@ -27,10 +27,12 @@
     <ul class="eigedom-rutenett">
       <% for (const e of content.properties) { %>
       <li class="eigedom-kort">
+        <% if (e.slug) { %><a href="/eigedom/<%= e.slug %>"><% } %>
         <% if (e.image) { %>
         <img src="<%= mediaUrl(e.image, 'sm') %>" srcset="<%= srcset(e.image) %>" sizes="(min-width: 720px) 30vw, 90vw" alt="<%= mediaAlt(e.image) || e.title %>" loading="lazy" width="282" height="391" />
         <% } %>
-        <h3><%= e.title %></h3>
+        <h3><%= e.title %><% if (e.status) { %> <span class="status-merke status-<%= e.status %>"><%= e.status === 'ledig' ? 'Ledig' : 'Utleigd' %></span><% } %></h3>
+        <% if (e.slug) { %></a><% } %>
       </li>
       <% } %>
     </ul>

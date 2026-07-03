@@ -25,7 +25,7 @@ function verifyLogin(user, password) {
 
 function setPassword(newPassword) {
   const hash = bcrypt.hashSync(newPassword, 12);
-  store.saveAuth({ passwordHash: hash, updatedAt: new Date().toISOString() });
+  return store.saveAuth({ passwordHash: hash, updatedAt: new Date().toISOString() });
 }
 
 function requireAuth(req, res, next) {

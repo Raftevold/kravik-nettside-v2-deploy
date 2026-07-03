@@ -98,6 +98,17 @@
     });
   });
 
+  /* ---------- Før/etter-glidar (prosjektsider) ---------- */
+  document.querySelectorAll('[data-foretter]').forEach(function (boks) {
+    var slider = boks.querySelector('.foretter-slider');
+    if (!slider) return;
+    var oppdater = function () {
+      boks.style.setProperty('--pos', slider.value + '%');
+    };
+    slider.addEventListener('input', oppdater);
+    oppdater();
+  });
+
   /* ---------- Biletvising (lysbilete) ---------- */
   var dialog = document.querySelector('.lysbilete');
   if (dialog && typeof dialog.showModal === 'function') {

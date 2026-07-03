@@ -1,4 +1,5 @@
 const path = require('path');
+const fs = require('fs');
 const crypto = require('crypto');
 const express = require('express');
 const helmet = require('helmet');
@@ -16,8 +17,24 @@ function escapeHtml(s) {
     .replace(/'/g, '&#39;');
 }
 
+// Cache-busting: versjonshash av CSS/JS rekna ut ved oppstart, brukt som
+// ?v=… i malane slik at nye deployar slår gjennom trass lang cache-tid.
+function assetVersion() {
+  const files = ['public/css/site.css', 'public/css/admin.css', 'public/js/site.js', 'public/js/admin.js'];
+  const h = crypto.createHash('sha1');
+  for (const f of files) {
+    try {
+      h.update(fs.readFileSync(path.join(store.ROOT, f)));
+    } catch {
+      /* fila kan mangle i test */
+    }
+  }
+  return h.digest('hex').slice(0, 10);
+}
+
 function createApp() {
   const app = express();
+  const ASSET_V = assetVersion();
   app.set('view engine', 'ejs');
   app.set('views', path.join(store.ROOT, 'views'));
   app.set('trust proxy', 1);
@@ -57,7 +74,11 @@ function createApp() {
   // Hjelpefunksjonar tilgjengelege i alle EJS-malar
   app.use((req, res, next) => {
     const content = store.getContent();
+    if (!content) {
+      return res.status(503).type('text/plain').send('Sida er under vedlikehald. Prøv igjen om litt.');
+    }
     res.locals.content = content;
+    res.locals.assetV = ASSET_V;
     res.locals.site = content.site;
     res.locals.alertBar = content.alert;
     res.locals.currentPath = req.path;

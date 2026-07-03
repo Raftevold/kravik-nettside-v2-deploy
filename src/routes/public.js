@@ -33,6 +33,7 @@ const REDIRECTS = new Map([
   ['/opplæringsbedrift', '/opplaeringsbedrift'],
   ['/miljø-og-bærekraft', '/miljo-og-berekraft'],
   ['/miljo-og-baerekraft', '/miljo-og-berekraft'],
+  ['/galleri', '/prosjekt'],
 ]);
 router.use((req, res, next) => {
   let decoded;
@@ -102,19 +103,59 @@ router.get('/eigedom', (req, res, next) => {
   }
 });
 
+router.get('/eigedom/:slug', (req, res, next) => {
+  try {
+    const content = store.getContent();
+    const property = (content.properties || []).find((p) => p.slug === req.params.slug);
+    if (!property) return next();
+    const url = seo.baseUrl(req);
+    res.render('pages/eigedom-detalj', {
+      property,
+      seoTitle: `${property.title} – Kr. A. Vik Eigedom AS`,
+      seoDescription: property.description
+        ? property.description.slice(0, 155)
+        : `${property.title} – utleigeleilegheit frå Kr. A. Vik Eigedom AS. Kontakt oss for leige.`,
+      canonical: `${url}/eigedom/${property.slug}`,
+      jsonLd: seo.eigedomJsonLd(content, url),
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.get(
+  '/prosjekt',
+  page('prosjekt', (content) => ({
+    seoTitle: content.pages.prosjekt.seoTitle,
+    seoDescription: content.pages.prosjekt.seoDescription,
+  }))
+);
+
+router.get('/prosjekt/:id', (req, res, next) => {
+  try {
+    const content = store.getContent();
+    const project = (content.projects || []).find((p) => p.id === req.params.id);
+    if (!project) return next();
+    const url = seo.baseUrl(req);
+    res.render('pages/prosjekt-detalj', {
+      project,
+      seoTitle: `${project.title} – prosjekt | ${content.site.name}`,
+      seoDescription: project.description
+        ? project.description.slice(0, 155)
+        : `${project.title} – prosjekt utført av ${content.site.name}.`,
+      canonical: `${url}/prosjekt/${project.id}`,
+      jsonLd: seo.plumberJsonLd(content, url),
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
 router.get(
   '/miljo-og-berekraft',
   page('miljo', (content) => ({
     seoTitle: content.pages.miljo.seoTitle,
     seoDescription: content.pages.miljo.seoDescription,
-  }))
-);
-
-router.get(
-  '/galleri',
-  page('galleri', (content) => ({
-    seoTitle: content.pages.galleri.seoTitle,
-    seoDescription: content.pages.galleri.seoDescription,
   }))
 );
 

@@ -137,6 +137,13 @@
         }
       ]
     },
+    "prosjekt": {
+      "title": "Prosjekt og galleri",
+      "seoTitle": "Prosjekt og bilete frå arbeid vi har utført | Kr. A. Vik AS",
+      "seoDescription": "Sjå prosjekt og bilete frå arbeid utført av Kr. A. Vik AS – baderom, varmeanlegg, sanitær og meir, i Stryn, på Nordfjordeid og elles i Nordfjord.",
+      "intro": "Her viser vi fram eit utval av prosjekta våre – og eit galleri med glimt frå arbeidskvardagen.",
+      "headerImage": "header-om-oss"
+    },
     "kontakt": {
       "title": "Kontakt oss",
       "seoTitle": "Kontakt oss – rørleggar i Stryn og på Nordfjordeid | Kr. A. Vik AS",
@@ -147,7 +154,8 @@
     "galleri": {
       "title": "Galleri",
       "seoTitle": "Galleri – prosjekt og arbeid | Kr. A. Vik AS",
-      "seoDescription": "Sjå bilete frå prosjekt og arbeid utført av Kr. A. Vik AS – rørleggarbedrift i Stryn og på Nordfjordeid."
+      "seoDescription": "Sjå bilete frå prosjekt og arbeid utført av Kr. A. Vik AS – rørleggarbedrift i Stryn og på Nordfjordeid.",
+      "legacy": "erstatta av «prosjekt» – behalden for eventuell import av gamle sikkerheitskopiar"
     }
   },
   "services": [
@@ -232,29 +240,36 @@
       "email": "hilde@kravik.no"
     }
   ],
+  "projects": [],
   "properties": [
     {
       "title": "Øvre Fjellsmauet 8, Bergen",
+      "slug": "ovre-fjellsmauet-8-bergen",
       "image": "leilegheit-1"
     },
     {
       "title": "Øvregaten 7, Bergen",
+      "slug": "ovregaten-7-bergen",
       "image": "leilegheit-2"
     },
     {
       "title": "Perhustunet, Stryn",
+      "slug": "perhustunet-stryn",
       "image": "leilegheit-3"
     },
     {
       "title": "Vinslottet, Oslo",
+      "slug": "vinslottet-oslo",
       "image": "leilegheit-4"
     },
     {
       "title": "Skottegaten 2, Bergen",
+      "slug": "skottegaten-2-bergen",
       "image": "leilegheit-5"
     },
     {
       "title": "Strandkanten Visnesvegen, Stryn",
+      "slug": "strandkanten-visnesvegen-stryn",
       "image": "leilegheit-6"
     }
   ],
@@ -719,5 +734,5 @@
       "alt": ""
     }
   ],
-  "updatedAt": "2026-07-02T18:54:51.348Z"
+  "updatedAt": "2026-07-03T05:00:44.652Z"
 }

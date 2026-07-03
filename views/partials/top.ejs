@@ -20,7 +20,7 @@
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   <link rel="preload" href="/fonts/manrope.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/site.css" />
+  <link rel="stylesheet" href="/css/site.css?v=<%= assetV %>" />
   <% if (typeof jsonLd !== 'undefined' && jsonLd) { %>
   <script type="application/ld+json" nonce="<%= cspNonce %>"><%- JSON.stringify(jsonLd).replace(/</g, '\\u003c') %></script>
   <% } %>
@@ -59,13 +59,14 @@
           <% const nav = [
             ['/', 'Framsida'],
             ['/tenester', 'Tenester'],
-            ['/butikk-og-landbruk', 'Butikk og landbruk'],
+            ['/prosjekt', 'Prosjekt'],
+            ['/butikk-og-landbruk', 'Butikk'],
             ['/om-oss', 'Om oss'],
             ['/eigedom', 'Eigedom'],
             ['/kontakt', 'Kontakt'],
           ]; %>
           <% for (const [href, label] of nav) { %>
-          <li><a href="<%= href %>" <%- currentPath === href ? 'aria-current="page"' : '' %>><%= label %></a></li>
+          <li><a href="<%= href %>" <%- currentPath === href || (href !== '/' && currentPath.startsWith(href + '/')) ? 'aria-current="page"' : '' %>><%= label %></a></li>
           <% } %>
           <li class="nav-cta"><a class="knapp knapp-primar" href="/kontakt#kontaktskjema">Be om tilbod</a></li>
         </ul>

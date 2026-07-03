@@ -8,6 +8,8 @@
 | `SESSION_SECRET` | ja | Lang tilfeldig streng – held admin-innlogging gyldig over omstart |
 | `ADMIN_USER` | nei | Standard `admin` |
 | `ADMIN_PASSWORD_HASH` | nei | Overstyrer passordet i `data/auth.json` (bcrypt-hash) |
+| `ADMIN_PASSWORD` | nei | Set startpassord ved første oppstart (blir hasha og lagra). Har ingen effekt om hash alt finst. Fjern frå Render etter bruk – ligg i klartekst der. |
+| `SYNC_MESSAGES` | nei | `true` = kontaktmeldingar blir òg synka til GitHub-repoet. Standard AV, sjå «Personvern i drift». |
 | `GITHUB_TOKEN` | ja* | Token med `contents: read/write` på dette repoet |
 | `GITHUB_REPO` | ja* | T.d. `Raftevold/kravik-nettside` |
 | `GITHUB_BRANCH` | nei | Standard `main` |
@@ -44,6 +46,15 @@ alt brukar for @kravik.no-adressene).
 
 ## Personvern i drift
 
-- Meldingar frå skjemaet inneheld persondata og blir synkroniserte til
-  **privat** GitHub-repo. Ikkje gjer repoet offentleg.
+- Meldingar frå kontaktskjemaet inneheld persondata. Som standard blir dei
+  **ikkje** synkroniserte til GitHub – git-historikk kan nemleg ikkje slettast
+  melding for melding, og då ville sletteplikta i GDPR art. 17 vore vanskeleg
+  å oppfylle. Konsekvens på Render gratisplan: admin-innboksen kan bli tømd
+  ved omstart/dvale.
+- **Tilråding: sett opp SMTP-varsling** (over), slik at e-postkassa til
+  bedrifta er den varige kanalen for kundemeldingar. Innboksen i admin er då
+  eit praktisk arbeidsverktøy, ikkje arkivet.
+- Om de heller vil ha varig innboks i admin: sett `SYNC_MESSAGES=true` og
+  hald repoet **privat**. Ver då klar over at sletta meldingar framleis ligg
+  i git-historikken til repoet.
 - Slett gamle meldingar i admin når dei er ferdig behandla.

@@ -73,7 +73,7 @@ const ROUTES = [
   { path: '/opplaeringsbedrift', priority: '0.6' },
   { path: '/eigedom', priority: '0.7' },
   { path: '/miljo-og-berekraft', priority: '0.5' },
-  { path: '/galleri', priority: '0.5' },
+  { path: '/prosjekt', priority: '0.7' },
   { path: '/kontakt', priority: '0.9' },
   { path: '/personvern', priority: '0.2' },
   { path: '/informasjonskapslar', priority: '0.2' },
@@ -81,9 +81,13 @@ const ROUTES = [
 
 function sitemapXml(content, url) {
   const lastmod = (content.updatedAt || new Date().toISOString()).slice(0, 10);
-  const items = ROUTES.map(
-    (r) => `  <url><loc>${url}${r.path}</loc><lastmod>${lastmod}</lastmod><priority>${r.priority}</priority></url>`
-  ).join('\n');
+  const dynamic = [
+    ...(content.projects || []).map((p) => ({ path: `/prosjekt/${p.id}`, priority: '0.6' })),
+    ...(content.properties || []).filter((p) => p.slug).map((p) => ({ path: `/eigedom/${p.slug}`, priority: '0.5' })),
+  ];
+  const items = [...ROUTES, ...dynamic]
+    .map((r) => `  <url><loc>${url}${r.path}</loc><lastmod>${lastmod}</lastmod><priority>${r.priority}</priority></url>`)
+    .join('\n');
   return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${items}\n</urlset>\n`;
 }
 

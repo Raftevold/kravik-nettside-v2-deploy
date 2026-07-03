@@ -37,6 +37,7 @@ router.use((req, res, next) => {
   res.locals.admin = true;
   res.locals.csrf = (req.session && req.session.csrf) || '';
   res.locals.flash = req.session ? req.session.flash : null;
+  res.locals.syncStatus = store.syncStatus();
   if (req.session) req.session.flash = null;
   next();
 });
@@ -47,6 +48,23 @@ function flash(req, text, type = 'ok') {
 
 function str(v, max = 2000) {
   return String(v ?? '').trim().slice(0, max);
+}
+
+function slugify(name) {
+  return String(name || '')
+    .toLowerCase()
+    .replace(/[æå]/g, 'a')
+    .replace(/ø/g, 'o')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 60) || 'oppforing';
+}
+
+function uniqueSlug(base, existing) {
+  let slug = base;
+  let i = 2;
+  while (existing.includes(slug)) slug = `${base}-${i++}`;
+  return slug;
 }
 
 // ---------- Innlogging ----------
@@ -73,8 +91,24 @@ router.post('/logg-ut', (req, res) => {
 router.use(auth.requireAuth);
 router.get('/', (req, res) => res.redirect('/admin/oversikt'));
 
-// Alle POST krev gyldig CSRF-token
-router.post('*', auth.verifyCsrf, (req, res, next) => next());
+// Alle POST krev gyldig CSRF-token. Multipart-skjema blir parsa av multer
+// inne i sjølve ruta – req.body finst ikkje før det – så der skjer
+// CSRF-sjekken ETTER multer (sjå /bilete/last-opp, /import, /prosjekt/last-opp).
+router.post('*', (req, res, next) => {
+  if (req.is('multipart/form-data')) return next();
+  return auth.verifyCsrf(req, res, next);
+});
+
+// Ventar på GitHub-synken og varslar brukaren om han feilar (utan synk
+// overlever ikkje endringa ein omstart på Render).
+async function persist(req, savePromise, okMsg) {
+  try {
+    await savePromise;
+    flash(req, okMsg);
+  } catch (err) {
+    flash(req, `Lagra lokalt – men synk til GitHub FEILA (${err.message}). Endringa kan gå tapt ved omstart.`, 'feil');
+  }
+}
 
 // ---------- Oversikt ----------
 router.get('/oversikt', (req, res) => {
@@ -92,7 +126,7 @@ router.get('/generelt', (req, res) => {
   res.render('admin/generelt', {});
 });
 
-router.post('/generelt', (req, res) => {
+router.post('/generelt', async (req, res) => {
   const c = store.getContent();
   const b = req.body;
   c.site.name = str(b.name, 100) || c.site.name;
@@ -132,23 +166,21 @@ router.post('/generelt', (req, res) => {
       note: str(b[`dep_note_${i}`], 150),
     });
   }
-  store.saveContent(c, 'kontaktinfo og generelt');
-  flash(req, 'Lagra!');
+  await persist(req, store.saveContent(c, 'kontaktinfo og generelt'), 'Lagra!');
   res.redirect('/admin/generelt');
 });
 
 // ---------- Varsellinje ----------
 router.get('/varsellinje', (req, res) => res.render('admin/varsellinje', {}));
 
-router.post('/varsellinje', (req, res) => {
+router.post('/varsellinje', async (req, res) => {
   const c = store.getContent();
   c.alert = {
     enabled: req.body.enabled === 'on',
     text: str(req.body.text, 300),
     link: str(req.body.link, 300),
   };
-  store.saveContent(c, 'varsellinje');
-  flash(req, c.alert.enabled ? 'Varsellinja er PÅ.' : 'Varsellinja er AV.');
+  await persist(req, store.saveContent(c, 'varsellinje'), c.alert.enabled ? 'Varsellinja er PÅ.' : 'Varsellinja er AV.');
   res.redirect('/admin/varsellinje');
 });
 
@@ -166,6 +198,13 @@ const PAGE_DEFS = {
   },
   tenester: {
     label: 'Tenester',
+    fields: [
+      ['intro', 'Introtekst', 'textarea'],
+      ['headerImage', 'Toppbilete', 'image'],
+    ],
+  },
+  prosjekt: {
+    label: 'Prosjekt og galleri (intro/SEO)',
     fields: [
       ['intro', 'Introtekst', 'textarea'],
       ['headerImage', 'Toppbilete', 'image'],
@@ -222,10 +261,6 @@ const PAGE_DEFS = {
       ['headerImage', 'Toppbilete', 'image'],
     ],
   },
-  galleri: {
-    label: 'Galleri (SEO)',
-    fields: [],
-  },
 };
 
 router.get('/sider', (req, res) => res.render('admin/sider', { PAGE_DEFS }));
@@ -241,7 +276,7 @@ router.get('/sider/:key', (req, res) => {
   res.render('admin/side-edit', { def, key: req.params.key, pageData });
 });
 
-router.post('/sider/:key', (req, res) => {
+router.post('/sider/:key', async (req, res) => {
   const def = PAGE_DEFS[req.params.key];
   if (!def) return res.redirect('/admin/sider');
   const c = store.getContent();
@@ -265,8 +300,7 @@ router.post('/sider/:key', (req, res) => {
       p[name] = str(req.body[name], 300);
     }
   }
-  store.saveContent(c, `sida «${def.label}»`);
-  flash(req, 'Lagra!');
+  await persist(req, store.saveContent(c, `sida «${def.label}»`), 'Lagra!');
   res.redirect(`/admin/sider/${req.params.key}`);
 });
 
@@ -275,7 +309,7 @@ const ICONS = ['bad', 'kran', 'varme', 'sprinkler', 'va', 'sveis', 'kamera', 'bo
 
 router.get('/tenester', (req, res) => res.render('admin/tenester', { ICONS }));
 
-router.post('/tenester/lagre', (req, res) => {
+router.post('/tenester/lagre', async (req, res) => {
   const c = store.getContent();
   const idx = Number(req.body.index);
   const item = {
@@ -290,28 +324,26 @@ router.post('/tenester/lagre', (req, res) => {
   }
   if (Number.isInteger(idx) && idx >= 0 && idx < c.services.length) c.services[idx] = item;
   else c.services.push(item);
-  store.saveContent(c, 'tenester');
-  flash(req, 'Lagra!');
+  await persist(req, store.saveContent(c, 'tenester'), 'Lagra!');
   res.redirect('/admin/tenester');
 });
 
-router.post('/tenester/slett', (req, res) => {
+router.post('/tenester/slett', async (req, res) => {
   const c = store.getContent();
   const idx = Number(req.body.index);
   if (Number.isInteger(idx) && idx >= 0 && idx < c.services.length) c.services.splice(idx, 1);
-  store.saveContent(c, 'tenester');
-  flash(req, 'Sletta.');
+  await persist(req, store.saveContent(c, 'tenester'), 'Sletta.');
   res.redirect('/admin/tenester');
 });
 
-router.post('/tenester/flytt', (req, res) => {
+router.post('/tenester/flytt', async (req, res) => {
   const c = store.getContent();
   const idx = Number(req.body.index);
   const dir = req.body.dir === 'opp' ? -1 : 1;
   const j = idx + dir;
   if (idx >= 0 && idx < c.services.length && j >= 0 && j < c.services.length) {
     [c.services[idx], c.services[j]] = [c.services[j], c.services[idx]];
-    store.saveContent(c, 'tenester (rekkjefølgje)');
+    await store.saveContent(c, 'tenester (rekkjefølgje)').catch(() => {});
   }
   res.redirect('/admin/tenester');
 });
@@ -319,7 +351,7 @@ router.post('/tenester/flytt', (req, res) => {
 // ---------- Team ----------
 router.get('/team', (req, res) => res.render('admin/team', {}));
 
-router.post('/team/lagre', (req, res) => {
+router.post('/team/lagre', async (req, res) => {
   const c = store.getContent();
   const idx = Number(req.body.index);
   const item = {
@@ -335,24 +367,22 @@ router.post('/team/lagre', (req, res) => {
   }
   if (Number.isInteger(idx) && idx >= 0 && idx < c.team.length) c.team[idx] = item;
   else c.team.push(item);
-  store.saveContent(c, 'kontaktpersonar');
-  flash(req, 'Lagra!');
+  await persist(req, store.saveContent(c, 'kontaktpersonar'), 'Lagra!');
   res.redirect('/admin/team');
 });
 
-router.post('/team/slett', (req, res) => {
+router.post('/team/slett', async (req, res) => {
   const c = store.getContent();
   const idx = Number(req.body.index);
   if (Number.isInteger(idx) && idx >= 0 && idx < c.team.length) c.team.splice(idx, 1);
-  store.saveContent(c, 'kontaktpersonar');
-  flash(req, 'Sletta.');
+  await persist(req, store.saveContent(c, 'kontaktpersonar'), 'Sletta.');
   res.redirect('/admin/team');
 });
 
 // ---------- Referansar ----------
 router.get('/referansar', (req, res) => res.render('admin/referansar', {}));
 
-router.post('/referansar/lagre', (req, res) => {
+router.post('/referansar/lagre', async (req, res) => {
   const c = store.getContent();
   const idx = Number(req.body.index);
   const item = {
@@ -366,51 +396,152 @@ router.post('/referansar/lagre', (req, res) => {
   }
   if (Number.isInteger(idx) && idx >= 0 && idx < c.testimonials.length) c.testimonials[idx] = item;
   else c.testimonials.push(item);
-  store.saveContent(c, 'referansar');
-  flash(req, 'Lagra!');
+  await persist(req, store.saveContent(c, 'referansar'), 'Lagra!');
   res.redirect('/admin/referansar');
 });
 
-router.post('/referansar/slett', (req, res) => {
+router.post('/referansar/slett', async (req, res) => {
   const c = store.getContent();
   const idx = Number(req.body.index);
   if (Number.isInteger(idx) && idx >= 0 && idx < c.testimonials.length) c.testimonials.splice(idx, 1);
-  store.saveContent(c, 'referansar');
-  flash(req, 'Sletta.');
+  await persist(req, store.saveContent(c, 'referansar'), 'Sletta.');
   res.redirect('/admin/referansar');
+});
+
+// ---------- Prosjekt ----------
+router.get('/prosjekt', (req, res) => res.render('admin/prosjekt', {}));
+
+function readProjectFields(body, existing = {}) {
+  return {
+    ...existing,
+    title: str(body.title, 150) || existing.title || '',
+    category: str(body.category, 80),
+    place: str(body.place, 100),
+    year: str(body.year, 10),
+    description: str(body.description, 5000),
+    cover: str(body.cover, 60),
+    before: str(body.before, 60),
+    after: str(body.after, 60),
+    images: existing.images || [],
+  };
+}
+
+router.post('/prosjekt/lagre', async (req, res) => {
+  const c = store.getContent();
+  c.projects = c.projects || [];
+  const idx = Number(req.body.index);
+  if (Number.isInteger(idx) && idx >= 0 && idx < c.projects.length) {
+    c.projects[idx] = readProjectFields(req.body, c.projects[idx]);
+  } else {
+    const item = readProjectFields(req.body);
+    if (!item.title) {
+      flash(req, 'Tittel manglar.', 'feil');
+      return res.redirect('/admin/prosjekt');
+    }
+    item.id = uniqueSlug(slugify(item.title), c.projects.map((p) => p.id));
+    c.projects.unshift(item);
+  }
+  await persist(req, store.saveContent(c, 'prosjekt'), 'Lagra!');
+  res.redirect('/admin/prosjekt');
+});
+
+router.post('/prosjekt/slett', async (req, res) => {
+  const c = store.getContent();
+  c.projects = c.projects || [];
+  const idx = Number(req.body.index);
+  if (Number.isInteger(idx) && idx >= 0 && idx < c.projects.length) c.projects.splice(idx, 1);
+  await persist(req, store.saveContent(c, 'prosjekt'), 'Prosjektet er sletta (bileta ligg framleis i biblioteket).');
+  res.redirect('/admin/prosjekt');
+});
+
+router.post('/prosjekt/last-opp', upload.array('bilete', 20), auth.verifyCsrf, async (req, res) => {
+  const c = store.getContent();
+  c.projects = c.projects || [];
+  c.media = c.media || [];
+  const idx = Number(req.body.index);
+  if (!Number.isInteger(idx) || idx < 0 || idx >= c.projects.length) return res.redirect('/admin/prosjekt');
+  const project = c.projects[idx];
+  let count = 0;
+  for (const file of req.files || []) {
+    if (!/^image\/(jpeg|png|webp|avif|gif)$/.test(file.mimetype)) continue;
+    try {
+      const entry = await images.processUpload(file.buffer, file.originalname, c.media.map((m) => m.id));
+      c.media.push(entry);
+      project.images.push(entry.id);
+      if (!project.cover) project.cover = entry.id;
+      count++;
+    } catch (err) {
+      console.error('[opplasting]', err.message);
+    }
+  }
+  await persist(req, store.saveContent(c, `prosjektbilete (${count} opplasta)`), count ? `${count} bilete lasta opp.` : 'Ingen bilete vart lasta opp – sjekk filformatet.');
+  res.redirect('/admin/prosjekt');
+});
+
+router.post('/prosjekt/fjern-bilete', async (req, res) => {
+  const c = store.getContent();
+  const idx = Number(req.body.index);
+  const id = str(req.body.id, 60);
+  if (Number.isInteger(idx) && idx >= 0 && idx < (c.projects || []).length) {
+    const p = c.projects[idx];
+    p.images = (p.images || []).filter((x) => x !== id);
+    if (p.cover === id) p.cover = p.images[0] || '';
+    if (p.before === id) p.before = '';
+    if (p.after === id) p.after = '';
+    await persist(req, store.saveContent(c, 'prosjektbilete'), 'Biletet er teke ut av prosjektet (ligg framleis i biblioteket).');
+  }
+  res.redirect('/admin/prosjekt');
 });
 
 // ---------- Eigedom (leilegheiter) ----------
 router.get('/eigedom', (req, res) => res.render('admin/eigedom', {}));
 
-router.post('/eigedom/lagre', (req, res) => {
+router.post('/eigedom/lagre', async (req, res) => {
   const c = store.getContent();
   const idx = Number(req.body.index);
-  const item = { title: str(req.body.title, 150), image: str(req.body.image, 60) };
+  const existing = Number.isInteger(idx) && idx >= 0 && idx < c.properties.length ? c.properties[idx] : {};
+  const item = {
+    ...existing,
+    title: str(req.body.title, 150),
+    image: str(req.body.image, 60),
+    status: ['', 'ledig', 'utleigd'].includes(req.body.status) ? req.body.status : '',
+    description: str(req.body.description, 5000),
+    facts: str(req.body.facts, 2000)
+      .split('\n')
+      .map((l) => l.trim())
+      .filter(Boolean)
+      .map((l) => {
+        const [label, ...rest] = l.split('|');
+        return { label: str(label, 60), value: str(rest.join('|'), 120) };
+      })
+      .filter((f) => f.label && f.value),
+    mapEmbed: str(req.body.mapEmbed, 2000),
+  };
   if (!item.title) {
     flash(req, 'Tittel manglar.', 'feil');
     return res.redirect('/admin/eigedom');
   }
+  if (!item.slug) {
+    item.slug = uniqueSlug(slugify(item.title), c.properties.map((p) => p.slug).filter(Boolean));
+  }
   if (Number.isInteger(idx) && idx >= 0 && idx < c.properties.length) c.properties[idx] = item;
   else c.properties.push(item);
-  store.saveContent(c, 'leilegheiter');
-  flash(req, 'Lagra!');
+  await persist(req, store.saveContent(c, 'leilegheiter'), 'Lagra!');
   res.redirect('/admin/eigedom');
 });
 
-router.post('/eigedom/slett', (req, res) => {
+router.post('/eigedom/slett', async (req, res) => {
   const c = store.getContent();
   const idx = Number(req.body.index);
   if (Number.isInteger(idx) && idx >= 0 && idx < c.properties.length) c.properties.splice(idx, 1);
-  store.saveContent(c, 'leilegheiter');
-  flash(req, 'Sletta.');
+  await persist(req, store.saveContent(c, 'leilegheiter'), 'Sletta.');
   res.redirect('/admin/eigedom');
 });
 
 // ---------- Bilete (mediebibliotek + galleri) ----------
 router.get('/bilete', (req, res) => res.render('admin/bilete', {}));
 
-router.post('/bilete/last-opp', upload.array('bilete', 20), async (req, res) => {
+router.post('/bilete/last-opp', upload.array('bilete', 20), auth.verifyCsrf, async (req, res) => {
   const c = store.getContent();
   c.media = c.media || [];
   c.gallery = c.gallery || [];
@@ -431,57 +562,59 @@ router.post('/bilete/last-opp', upload.array('bilete', 20), async (req, res) => 
       console.error('[opplasting]', err.message);
     }
   }
-  store.saveContent(c, `bilete (${count} opplasta)`);
-  flash(req, count ? `${count} bilete lasta opp.` : 'Ingen bilete vart lasta opp – sjekk filformatet.', count ? 'ok' : 'feil');
+  await persist(req, store.saveContent(c, `bilete (${count} opplasta)`), count ? `${count} bilete lasta opp.` : 'Ingen bilete vart lasta opp – sjekk filformatet.');
   res.redirect('/admin/bilete');
 });
 
-router.post('/bilete/alt', (req, res) => {
+router.post('/bilete/alt', async (req, res) => {
   const c = store.getContent();
   const m = (c.media || []).find((x) => x.id === req.body.id);
   if (m) {
     m.alt = str(req.body.alt, 200);
-    store.saveContent(c, 'alt-tekst');
-    flash(req, 'Alt-tekst lagra.');
+    await persist(req, store.saveContent(c, 'alt-tekst'), 'Alt-tekst lagra.');
   }
   res.redirect('/admin/bilete');
 });
 
-router.post('/bilete/slett', (req, res) => {
+router.post('/bilete/slett', async (req, res) => {
   const c = store.getContent();
   const id = str(req.body.id, 60);
   c.media = (c.media || []).filter((m) => m.id !== id);
   c.gallery = (c.gallery || []).filter((g) => g.image !== id);
+  for (const p of c.projects || []) {
+    p.images = (p.images || []).filter((x) => x !== id);
+    if (p.cover === id) p.cover = p.images[0] || '';
+    if (p.before === id) p.before = '';
+    if (p.after === id) p.after = '';
+  }
   images.deleteMedia(id);
-  store.saveContent(c, 'sletta bilete');
-  flash(req, 'Biletet er sletta.');
+  await persist(req, store.saveContent(c, 'sletta bilete'), 'Biletet er sletta.');
   res.redirect('/admin/bilete');
 });
 
-router.post('/galleri/toggle', (req, res) => {
+router.post('/galleri/toggle', async (req, res) => {
   const c = store.getContent();
   const id = str(req.body.id, 60);
   c.gallery = c.gallery || [];
   const idx = c.gallery.findIndex((g) => g.image === id);
   if (idx >= 0) c.gallery.splice(idx, 1);
   else c.gallery.push({ image: id });
-  store.saveContent(c, 'galleri');
+  await store.saveContent(c, 'galleri').catch(() => {});
   res.redirect('/admin/bilete');
 });
 
 // ---------- Meldingar ----------
 router.get('/meldingar', (req, res) => {
-  res.render('admin/meldingar', { messages: store.getMessages(), mailConfigured: mail.configured });
+  res.render('admin/meldingar', { messages: store.getMessages(), mailConfigured: mail.configured, sync: store.syncStatus() });
 });
 
-router.post('/meldingar/lest', (req, res) => {
-  store.markMessageRead(str(req.body.id, 40), req.body.lest !== '0');
+router.post('/meldingar/lest', async (req, res) => {
+  await store.markMessageRead(str(req.body.id, 40), req.body.lest !== '0').catch(() => {});
   res.redirect('/admin/meldingar');
 });
 
-router.post('/meldingar/slett', (req, res) => {
-  store.deleteMessage(str(req.body.id, 40));
-  flash(req, 'Melding sletta.');
+router.post('/meldingar/slett', async (req, res) => {
+  await persist(req, store.deleteMessage(str(req.body.id, 40)), 'Melding sletta.');
   res.redirect('/admin/meldingar');
 });
 
@@ -490,7 +623,7 @@ router.get('/innstillingar', (req, res) => {
   res.render('admin/innstillingar', { sync: store.syncStatus(), mailConfigured: mail.configured });
 });
 
-router.post('/innstillingar/passord', (req, res) => {
+router.post('/innstillingar/passord', async (req, res) => {
   const { gjeldande, nytt, gjenta } = req.body;
   if (!auth.verifyLogin(auth.ADMIN_USER, String(gjeldande || ''))) {
     flash(req, 'Gjeldande passord er feil.', 'feil');
@@ -501,8 +634,12 @@ router.post('/innstillingar/passord', (req, res) => {
   } else if (process.env.ADMIN_PASSWORD_HASH) {
     flash(req, 'Passordet er styrt av miljøvariabelen ADMIN_PASSWORD_HASH og kan ikkje endrast her.', 'feil');
   } else {
-    auth.setPassword(String(nytt));
-    flash(req, 'Passordet er endra.');
+    try {
+      await auth.setPassword(String(nytt));
+      flash(req, 'Passordet er endra.');
+    } catch (err) {
+      flash(req, `Passordet er endra lokalt, men synk FEILA (${err.message}).`, 'feil');
+    }
   }
   res.redirect('/admin/innstillingar');
 });
@@ -512,12 +649,11 @@ router.get('/eksport', (req, res) => {
   res.type('application/json').send(JSON.stringify(store.getContent(), null, 2));
 });
 
-router.post('/import', upload.single('fil'), (req, res) => {
+router.post('/import', upload.single('fil'), auth.verifyCsrf, async (req, res) => {
   try {
     const json = JSON.parse(req.file.buffer.toString('utf8'));
     if (!json.site || !json.pages) throw new Error('Fila manglar «site»/«pages».');
-    store.saveContent(json, 'import av innhald');
-    flash(req, 'Innhald importert.');
+    await persist(req, store.saveContent(json, 'import av innhald'), 'Innhald importert.');
   } catch (err) {
     flash(req, `Import feila: ${err.message}`, 'feil');
   }
