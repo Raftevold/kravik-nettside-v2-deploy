@@ -29,9 +29,12 @@
       <li class="eigedom-kort">
         <% if (e.slug) { %><a href="/eigedom/<%= e.slug %>"><% } %>
         <% if (framside) { %>
-        <img src="<%= mediaUrl(framside, 'sm') %>" srcset="<%= srcset(framside) %>" sizes="(min-width: 720px) 30vw, 90vw" alt="<%= mediaAlt(framside) || e.title %>" loading="lazy" width="282" height="391" />
+        <div class="eigedom-kort-bilete">
+          <img src="<%= mediaUrl(framside, 'sm') %>" srcset="<%= srcset(framside) %>" sizes="(min-width: 720px) 30vw, 90vw" alt="<%= mediaAlt(framside) || e.title %>" loading="lazy" width="282" height="391" />
+          <% if (e.status) { %><span class="status-merke status-merke-bilete status-<%= e.status %>"><%= e.status === 'ledig' ? 'Ledig' : 'Utleigd' %></span><% } %>
+        </div>
         <% } %>
-        <h3><%= e.title %><% if (e.status) { %> <span class="status-merke status-<%= e.status %>"><%= e.status === 'ledig' ? 'Ledig' : 'Utleigd' %></span><% } %></h3>
+        <h3><%= e.title %><% if (!framside && e.status) { %> <span class="status-merke status-<%= e.status %>"><%= e.status === 'ledig' ? 'Ledig' : 'Utleigd' %></span><% } %></h3>
         <% if (e.slug) { %></a><% } %>
       </li>
       <% } %>

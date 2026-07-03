@@ -277,7 +277,12 @@
     {
       "title": "Øvregaten 7, Bergen",
       "slug": "ovregaten-7-bergen",
-      "image": "leilegheit-2"
+      "image": "leilegheit-2",
+      "status": "utleigd",
+      "description": "",
+      "facts": [],
+      "mapEmbed": "",
+      "images": []
     },
     {
       "title": "Perhustunet, Stryn",
@@ -803,5 +808,5 @@
       "alt": ""
     }
   ],
-  "updatedAt": "2026-07-03T12:51:42.532Z"
+  "updatedAt": "2026-07-03T13:02:51.796Z"
 }

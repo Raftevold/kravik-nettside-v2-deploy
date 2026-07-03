@@ -1065,9 +1065,25 @@ a.varsellinje:hover { background: #8a3a0f; color: var(--kvit); text-decoration: 
 }
 
 .status-ledig { background: #e8f3ec; color: #1d5b37; border: 1px solid #2c7a4b; }
-.status-utleigd { background: #f1efe9; color: #51626a; border: 1px solid #b5bfc2; }
+.status-utleigd { background: #f7e9e8; color: #8c3730; border: 1px solid #b0554d; }
 .sidehovud .status-ledig { background: #2c7a4b; color: #fff; border-color: #2c7a4b; }
-.sidehovud .status-utleigd { background: rgb(255 255 255 / 0.16); color: #fff; border-color: rgb(255 255 255 / 0.4); }
+.sidehovud .status-utleigd { background: #b0554d; color: #fff; border-color: #b0554d; }
+
+/* Statusmerke oppe i venstre hjørne av biletet */
+.eigedom-kort-bilete,
+.eigedom-hovudholdar { position: relative; }
+
+.status-merke-bilete {
+  position: absolute;
+  top: 0.7rem;
+  left: 0.7rem;
+  z-index: 2;
+  box-shadow: 0 1px 8px rgb(0 0 0 / 0.3);
+  pointer-events: none;
+}
+
+.status-merke-bilete.status-ledig { background: #2c7a4b; color: #fff; border-color: #2c7a4b; }
+.status-merke-bilete.status-utleigd { background: #b0554d; color: #fff; border-color: #b0554d; }
 
 /* --------------------------------------------------------------------------
    Diverse
