@@ -243,7 +243,20 @@
       "image": "hilde-2"
     }
   ],
-  "projects": [],
+  "projects": [
+    {
+      "title": "Renovering bad",
+      "category": "Baderom",
+      "place": "Stryn",
+      "year": "2020",
+      "description": "Oppussing",
+      "cover": "",
+      "before": "",
+      "after": "",
+      "images": [],
+      "id": "renovering-bad"
+    }
+  ],
   "properties": [
     {
       "title": "Øvre Fjellsmauet 8, 5018 BERGEN",
@@ -812,5 +825,5 @@
       "alt": ""
     }
   ],
-  "updatedAt": "2026-07-03T16:41:07.669Z"
+  "updatedAt": "2026-07-03T16:43:22.597Z"
 }
