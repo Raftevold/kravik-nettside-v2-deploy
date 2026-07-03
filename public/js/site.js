@@ -109,18 +109,67 @@
     oppdater();
   });
 
-  /* ---------- Biletvising (lysbilete) ---------- */
+  /* ---------- Biletvising (lysbilete) med blaing ----------
+     Alle bilete med .galleri-knapp på sida utgjer eitt «album»: bla med
+     pilknappane, piltastane (←/→, Home/End) eller sveip på mobil. */
   var dialog = document.querySelector('.lysbilete');
   if (dialog && typeof dialog.showModal === 'function') {
     var bilete = dialog.querySelector('img');
     var lukk = dialog.querySelector('.lysbilete-lukk');
+    var teljar = dialog.querySelector('.lysbilete-teljar');
+    var forrige = dialog.querySelector('.lysbilete-forrige');
+    var neste = dialog.querySelector('.lysbilete-neste');
+    var knappar = Array.prototype.slice.call(document.querySelectorAll('.galleri-knapp'));
+    var index = 0;
 
-    document.querySelectorAll('.galleri-knapp').forEach(function (knapp) {
+    dialog.classList.toggle('lysbilete-aaleine', knappar.length < 2);
+
+    function vis(i) {
+      if (!knappar.length) return;
+      index = ((i % knappar.length) + knappar.length) % knappar.length;
+      var k = knappar[index];
+      bilete.src = k.getAttribute('data-lysbilete');
+      bilete.alt = k.getAttribute('data-alt') || '';
+      if (teljar) teljar.textContent = knappar.length > 1 ? (index + 1) + ' / ' + knappar.length : '';
+      // Last naboane i bakgrunnen, så blainga kjennest augneblikkeleg
+      if (knappar.length > 1) {
+        [index + 1, index - 1].forEach(function (j) {
+          var n = knappar[((j % knappar.length) + knappar.length) % knappar.length];
+          new Image().src = n.getAttribute('data-lysbilete');
+        });
+      }
+    }
+
+    knappar.forEach(function (knapp, i) {
       knapp.addEventListener('click', function () {
-        bilete.src = knapp.getAttribute('data-lysbilete');
-        bilete.alt = knapp.getAttribute('data-alt') || '';
+        vis(i);
         dialog.showModal();
       });
+    });
+
+    if (forrige) forrige.addEventListener('click', function () { vis(index - 1); });
+    if (neste) neste.addEventListener('click', function () { vis(index + 1); });
+
+    dialog.addEventListener('keydown', function (e) {
+      if (knappar.length < 2) return;
+      if (e.key === 'ArrowRight') { vis(index + 1); e.preventDefault(); }
+      else if (e.key === 'ArrowLeft') { vis(index - 1); e.preventDefault(); }
+      else if (e.key === 'Home') { vis(0); e.preventDefault(); }
+      else if (e.key === 'End') { vis(knappar.length - 1); e.preventDefault(); }
+    });
+
+    /* Sveip på mobil */
+    var sveipStart = null;
+    var sveipte = false;
+    dialog.addEventListener('pointerdown', function (e) { sveipStart = e.clientX; });
+    dialog.addEventListener('pointerup', function (e) {
+      if (sveipStart === null) return;
+      var dx = e.clientX - sveipStart;
+      sveipStart = null;
+      if (Math.abs(dx) > 48 && knappar.length > 1) {
+        sveipte = true;
+        vis(index + (dx < 0 ? 1 : -1));
+      }
     });
 
     lukk.addEventListener('click', function () {
@@ -128,6 +177,7 @@
     });
 
     dialog.addEventListener('click', function (e) {
+      if (sveipte) { sveipte = false; return; }
       if (e.target === dialog) dialog.close();
     });
 
