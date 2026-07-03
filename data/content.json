@@ -251,8 +251,8 @@
       "year": "2020",
       "description": "Oppussing",
       "cover": "nyttt-bad",
-      "before": "",
-      "after": "",
+      "before": "gammelt-bad-2",
+      "after": "nyttt-bad",
       "images": [
         "nyttt-bad",
         "gammelt-bad-2"
@@ -840,5 +840,5 @@
       "alt": ""
     }
   ],
-  "updatedAt": "2026-07-03T16:43:37.535Z"
+  "updatedAt": "2026-07-03T16:43:52.127Z"
 }
