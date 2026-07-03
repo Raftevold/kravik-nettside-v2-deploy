@@ -530,6 +530,7 @@ a.varsellinje:hover { background: #8a3a0f; color: var(--kvit); text-decoration: 
 }
 
 .galleri-knapp {
+  position: relative; /* held ev. .sr-only innkapsla (sjå .stjerner) */
   display: block;
   width: 100%;
   padding: 0;
@@ -676,7 +677,10 @@ a.varsellinje:hover { background: #8a3a0f; color: var(--kvit); text-decoration: 
 .referanse blockquote { margin: 0; font-size: 1.05rem; }
 .referanse-kjelde { margin: 0.8rem 0 0; color: var(--dus); font-weight: 650; }
 
-.stjerner { margin: 0 0 0.5rem; font-size: 1.1rem; letter-spacing: 0.1em; color: #c9862b; }
+/* position: relative gjer at .sr-only inni («X av 5 stjerner») blir posisjonert
+   mot dette avsnittet – ikkje mot viewporten – så teksten ikkje rømmer ut og
+   lagar horisontal scroll på sida. */
+.stjerner { position: relative; margin: 0 0 0.5rem; font-size: 1.1rem; letter-spacing: 0.1em; color: #c9862b; }
 .stjerner-tomme { color: #cfc9bd; }
 
 /* Ved 5+ omtalar: rullande band med scroll-snap og automatisk blaing */
