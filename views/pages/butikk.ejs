@@ -5,16 +5,16 @@
 <section class="seksjon">
   <div class="ramme kort-rutenett kort-rutenett-2">
     <div class="kort kort-stor">
-      <img src="/img/logo-comfort.png" alt="Comfort" height="30" loading="lazy" />
+      <span class="logo-brikke"><img src="/img/logo-comfort.png" alt="Comfort" height="26" loading="lazy" /></span>
       <h2>Comfort-butikken</h2>
       <p><%= p.comfortText %></p>
       <p><a class="pil-lenke" href="https://www.comfort.no/inspirasjon-og-rad/" rel="external noopener">Inspirasjon og råd hos Comfort</a></p>
     </div>
     <div class="kort kort-stor">
-      <div class="logo-par">
-        <img src="/img/logo-husqvarna.png" alt="Husqvarna" height="26" loading="lazy" />
-        <img src="/img/logo-kellfri.png" alt="Kellfri" height="26" loading="lazy" />
-      </div>
+      <span class="logo-brikke">
+        <img src="/img/logo-husqvarna.png" alt="Husqvarna" height="22" loading="lazy" />
+        <img src="/img/logo-kellfri.png" alt="Kellfri" height="22" loading="lazy" />
+      </span>
       <h2>Landbruksavdelinga</h2>
       <p><%= p.landbrukText %></p>
       <p><a class="pil-lenke" href="/kontakt">Spør oss om utvalet</a></p>
@@ -26,6 +26,9 @@
   <div class="ramme delt">
     <div>
       <h2>Besøk oss i Stryn</h2>
+      <% if (p.image) { %>
+      <img class="butikk-bilete" src="<%= mediaUrl(p.image, 'md') %>" srcset="<%= srcset(p.image) %>" sizes="(min-width: 800px) 50vw, 95vw" alt="<%= mediaAlt(p.image) || 'Butikken vår i Stryn' %>" loading="lazy" />
+      <% } %>
       <address class="brodtekst">
         <p><strong><%= site.name %></strong><br /><%= site.address.street %>, <%= site.address.zip %> <%= site.address.city %></p>
       </address>

@@ -109,6 +109,32 @@
     oppdater();
   });
 
+  /* ---------- Omtale-karusell (5+ omtalar) ----------
+     Blar automatisk til neste kort kvart 4,5 sekund. Stoppar når brukaren
+     held peikaren over, tek på skjermen eller fokuserer – og heilt av ved
+     prefers-reduced-motion. */
+  var band = document.querySelector('[data-karusell]');
+  if (band && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    var pause = false;
+    ['pointerenter', 'touchstart', 'focusin'].forEach(function (ev) {
+      band.addEventListener(ev, function () { pause = true; }, { passive: true });
+    });
+    ['pointerleave', 'focusout'].forEach(function (ev) {
+      band.addEventListener(ev, function () { pause = false; });
+    });
+    setInterval(function () {
+      if (pause || document.hidden) return;
+      var kort = band.querySelector('.referanse');
+      if (!kort) return;
+      var steg = kort.offsetWidth + 18; // kortbreidd + gap
+      if (band.scrollLeft + band.clientWidth >= band.scrollWidth - 10) {
+        band.scrollTo({ left: 0, behavior: 'smooth' });
+      } else {
+        band.scrollBy({ left: steg, behavior: 'smooth' });
+      }
+    }, 4500);
+  }
+
   /* ---------- Biletvising (lysbilete) med blaing ----------
      Alle bilete med .galleri-knapp på sida utgjer eitt «album»: bla med
      pilknappane, piltastane (←/→, Home/End) eller sveip på mobil. */

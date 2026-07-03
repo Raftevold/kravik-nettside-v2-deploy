@@ -213,7 +213,8 @@
       "name": "Kristian Vik",
       "role": "Dagleg leiar / økonomisjef",
       "phone": "900 95 233",
-      "email": "kristian@kravik.no"
+      "email": "kristian@kravik.no",
+      "image": "kristian"
     },
     {
       "name": "Sam Kjetil Torheim",
@@ -237,7 +238,8 @@
       "name": "Hilde Eikenæs Vik",
       "role": "Dagleg leiar, Kr. A. Vik Eigedom AS",
       "phone": "918 61 480",
-      "email": "hilde@kravik.no"
+      "email": "hilde@kravik.no",
+      "image": "hilde-2"
     }
   ],
   "projects": [
@@ -438,6 +440,12 @@
     },
     {
       "image": "galleri-42"
+    },
+    {
+      "image": "kristian"
+    },
+    {
+      "image": "hilde-2"
     }
   ],
   "media": [
@@ -806,7 +814,19 @@
       "w": 2048,
       "h": 2048,
       "alt": ""
+    },
+    {
+      "id": "kristian",
+      "w": 1371,
+      "h": 1369,
+      "alt": ""
+    },
+    {
+      "id": "hilde-2",
+      "w": 281,
+      "h": 400,
+      "alt": ""
     }
   ],
-  "updatedAt": "2026-07-03T13:02:51.796Z"
+  "updatedAt": "2026-07-03T13:13:26.198Z"
 }
