@@ -856,6 +856,11 @@ a.varsellinje:hover { background: #8a3a0f; color: var(--kvit); text-decoration: 
   justify-content: center;
 }
 
+/* display:flex over vinn elles over nettlesaren sin [hidden]-regel */
+.samtykke[hidden] {
+  display: none;
+}
+
 .samtykke-boks {
   background: var(--kvit);
   border: 1px solid var(--linje);
