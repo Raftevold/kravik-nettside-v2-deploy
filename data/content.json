@@ -260,13 +260,16 @@
   ],
   "properties": [
     {
-      "title": "Øvre Fjellsmauet 8, Bergen",
+      "title": "Øvre Fjellsmauet 8, 5018 BERGEN",
       "slug": "ovre-fjellsmauet-8-bergen",
       "image": "leilegheit-1",
       "status": "ledig",
       "description": "kom å sjå i kveld!",
       "facts": [],
-      "mapEmbed": ""
+      "mapEmbed": "",
+      "lat": 60.396500996913225,
+      "lng": 5.329906021928492,
+      "images": []
     },
     {
       "title": "Øvregaten 7, Bergen",
@@ -779,5 +782,5 @@
       "alt": ""
     }
   ],
-  "updatedAt": "2026-07-03T12:29:00.962Z"
+  "updatedAt": "2026-07-03T12:40:30.525Z"
 }
