@@ -213,7 +213,8 @@
       "name": "Kristian Vik",
       "role": "Dagleg leiar / økonomisjef",
       "phone": "900 95 233",
-      "email": "kristian@kravik.no"
+      "email": "kristian@kravik.no",
+      "image": "kristian"
     },
     {
       "name": "Sam Kjetil Torheim",
@@ -817,5 +818,5 @@
       "alt": ""
     }
   ],
-  "updatedAt": "2026-07-03T13:10:38.214Z"
+  "updatedAt": "2026-07-03T13:10:58.654Z"
 }
