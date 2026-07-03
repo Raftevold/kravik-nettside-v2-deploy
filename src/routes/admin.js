@@ -230,6 +230,7 @@ const PAGE_DEFS = {
       ['intro', 'Introtekst', 'textarea'],
       ['comfortText', 'Tekst om Comfort-butikken', 'textarea'],
       ['landbrukText', 'Tekst om landbruksavdelinga', 'textarea'],
+      ['image', 'Bilete av butikken (valfritt – vist på framsida og butikksida)', 'image'],
       ['headerImage', 'Toppbilete', 'image'],
     ],
   },
@@ -392,10 +393,12 @@ router.get('/referansar', (req, res) => res.render('admin/referansar', {}));
 router.post('/referansar/lagre', async (req, res) => {
   const c = store.getContent();
   const idx = Number(req.body.index);
+  const rating = Number.parseInt(req.body.rating, 10);
   const item = {
     quote: str(req.body.quote, 800),
     author: str(req.body.author, 100),
     context: str(req.body.context, 120),
+    rating: rating >= 1 && rating <= 5 ? rating : undefined,
   };
   if (!item.quote || !item.author) {
     flash(req, 'Både sitat og namn må fyllast ut.', 'feil');

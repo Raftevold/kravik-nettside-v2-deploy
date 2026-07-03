@@ -87,12 +87,15 @@
       <h2 id="butikk-tittel">Butikk og landbruksavdeling i Stryn</h2>
       <p><%= content.pages.butikk.intro %></p>
       <p><a class="pil-lenke" href="/butikk-og-landbruk">Meir om butikken</a></p>
+      <% if (content.pages.butikk.image) { %>
+      <img class="butikk-bilete" src="<%= mediaUrl(content.pages.butikk.image, 'md') %>" srcset="<%= srcset(content.pages.butikk.image) %>" sizes="(min-width: 800px) 50vw, 95vw" alt="<%= mediaAlt(content.pages.butikk.image) || 'Butikken vår i Stryn' %>" loading="lazy" />
+      <% } %>
     </div>
     <ul class="partnar-liste">
       <% for (const pa of content.partners) { %>
       <li>
-        <a href="<%= pa.url %>" rel="external noopener">
-          <img src="/img/<%= pa.logo %>.png" alt="<%= pa.name %>" loading="lazy" height="30" />
+        <a class="logo-brikke" href="<%= pa.url %>" rel="external noopener" aria-label="<%= pa.name %> (ekstern side)">
+          <img src="/img/<%= pa.logo %>.png" alt="<%= pa.name %>" loading="lazy" height="24" />
         </a>
         <p><%= pa.text %></p>
       </li>
@@ -121,13 +124,16 @@
 </section>
 <% } %>
 
-<% if (content.testimonials && content.testimonials.length) { %>
+<% if (content.testimonials && content.testimonials.length) { const karusell = content.testimonials.length >= 5; %>
 <section class="seksjon seksjon-tona" aria-labelledby="ref-tittel">
   <div class="ramme">
     <div class="seksjon-hovud"><h2 id="ref-tittel">Kva kundane seier</h2></div>
-    <ul class="referansar">
+    <ul class="referansar<%= karusell ? ' referansar-band' : '' %>" <%- karusell ? 'data-karusell tabindex="0" aria-label="Kundeomtalar – blar automatisk, held du peikaren over stoppar blainga"' : '' %>>
       <% for (const t of content.testimonials) { %>
       <li class="referanse">
+        <% if (t.rating) { %>
+        <p class="stjerner"><span aria-hidden="true"><%= '★'.repeat(t.rating) %><span class="stjerner-tomme"><%= '☆'.repeat(5 - t.rating) %></span></span><span class="sr-only"><%= t.rating %> av 5 stjerner</span></p>
+        <% } %>
         <blockquote><p>«<%= t.quote %>»</p></blockquote>
         <p class="referanse-kjelde"><%= t.author %><% if (t.context) { %> · <%= t.context %><% } %></p>
       </li>
@@ -136,6 +142,16 @@
   </div>
 </section>
 <% } %>
+
+<section class="laerling-band" aria-labelledby="laerling-tittel">
+  <div class="ramme laerling-inner">
+    <div>
+      <h2 id="laerling-tittel">Vil du bli røyrleggar?</h2>
+      <p>Vi er godkjend opplæringsbedrift og har til ei kvar tid 1–2 lærlingar i arbeid.</p>
+    </div>
+    <a class="knapp knapp-sekundar" href="/opplaeringsbedrift">Bli lærling hos oss</a>
+  </div>
+</section>
 
 <%- include('../partials/cta-band') %>
 <%- include('../partials/bottom') %>

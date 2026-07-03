@@ -14,6 +14,11 @@ Hugs å få løyve frå kunden før du publiserer namn.</p>
     <div class="felt-rad">
       <div class="felt"><label for="r-author-<%= i %>">Namn</label><input id="r-author-<%= i %>" name="author" value="<%= t.author %>" required /></div>
       <div class="felt"><label for="r-context-<%= i %>">Samanheng (t.d. «Baderom, Stryn 2026»)</label><input id="r-context-<%= i %>" name="context" value="<%= t.context %>" /></div>
+      <div class="felt"><label for="r-rating-<%= i %>">Stjerner</label>
+        <select id="r-rating-<%= i %>" name="rating">
+          <option value="" <%= !t.rating ? 'selected' : '' %>>(ingen)</option>
+          <% for (let s = 5; s >= 1; s--) { %><option value="<%= s %>" <%= t.rating === s ? 'selected' : '' %>><%= '★'.repeat(s) %> (<%= s %>)</option><% } %>
+        </select></div>
     </div>
     <button type="submit" class="knapp knapp-primar">Lagre</button>
   </form>
@@ -31,6 +36,11 @@ Hugs å få løyve frå kunden før du publiserer namn.</p>
   <div class="felt-rad">
     <div class="felt"><label for="nr-author">Namn</label><input id="nr-author" name="author" required /></div>
     <div class="felt"><label for="nr-context">Samanheng</label><input id="nr-context" name="context" /></div>
+    <div class="felt"><label for="nr-rating">Stjerner</label>
+      <select id="nr-rating" name="rating">
+        <% for (let s = 5; s >= 1; s--) { %><option value="<%= s %>"><%= '★'.repeat(s) %> (<%= s %>)</option><% } %>
+        <option value="">(ingen)</option>
+      </select></div>
   </div>
   <button type="submit" class="knapp knapp-primar">Legg til</button>
 </form>

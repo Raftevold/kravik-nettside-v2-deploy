@@ -391,7 +391,20 @@ a.varsellinje:hover { background: #8a3a0f; color: var(--kvit); text-decoration: 
   padding: 0;
 }
 
-.kort-rutenett-2 { grid-template-columns: repeat(auto-fill, minmax(min(340px, 100%), 1fr)); }
+/* auto-fit (ikkje auto-fill): tomme kolonnar kollapsar, så to kort fyller heile breidda */
+.kort-rutenett-2 { grid-template-columns: repeat(auto-fit, minmax(min(340px, 100%), 1fr)); }
+
+/* Partnar-logoane er kvite – dei treng mørk botn for å synast */
+.logo-brikke {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.1rem;
+  background: var(--petrol-mork);
+  padding: 0.6rem 1rem;
+  border-radius: 10px;
+}
+
+.logo-brikke img { display: block; }
 
 .kort {
   background: var(--kvit);
@@ -655,6 +668,43 @@ a.varsellinje:hover { background: #8a3a0f; color: var(--kvit); text-decoration: 
 
 .referanse blockquote { margin: 0; font-size: 1.05rem; }
 .referanse-kjelde { margin: 0.8rem 0 0; color: var(--dus); font-weight: 650; }
+
+.stjerner { margin: 0 0 0.5rem; font-size: 1.1rem; letter-spacing: 0.1em; color: #c9862b; }
+.stjerner-tomme { color: #cfc9bd; }
+
+/* Ved 5+ omtalar: rullande band med scroll-snap og automatisk blaing */
+.referansar-band {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  gap: 1.1rem;
+  padding-bottom: 0.6rem;
+  scrollbar-width: thin;
+}
+
+.referansar-band .referanse {
+  flex: 0 0 min(340px, 82%);
+  scroll-snap-align: start;
+}
+
+.referansar-band:focus-visible { outline: var(--fokus); outline-offset: 3px; }
+
+/* Lærling-teaser på framsida */
+.laerling-band { background: var(--petrol-lys); padding-block: clamp(1.8rem, 4vw, 2.6rem); }
+
+.laerling-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem 2rem;
+}
+
+.laerling-band h2 { font-size: 1.35rem; margin-bottom: 0.2em; }
+.laerling-band p { margin: 0; color: var(--dus); }
+
+/* Butikkbilete (valfritt, sett i admin) */
+.butikk-bilete { display: block; width: 100%; border-radius: var(--radius); margin-top: 1.2rem; }
 
 /* Infoboks, dokument */
 .infoboks {
