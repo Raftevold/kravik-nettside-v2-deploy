@@ -247,10 +247,14 @@
       "place": "Stryn",
       "year": "2020",
       "description": "sjå her dette vart bra",
-      "cover": "",
+      "cover": "product-studio-1-6-png-27",
       "before": "",
       "after": "",
-      "images": [],
+      "images": [
+        "product-studio-1-6-png-27",
+        "product-studio-1-6-png-28",
+        "product-studio-1-6-png-29"
+      ],
       "id": "baderom-renovering"
     }
   ],
@@ -745,7 +749,25 @@
       "w": 969,
       "h": 1200,
       "alt": ""
+    },
+    {
+      "id": "product-studio-1-6-png-27",
+      "w": 2048,
+      "h": 2048,
+      "alt": ""
+    },
+    {
+      "id": "product-studio-1-6-png-28",
+      "w": 2048,
+      "h": 2048,
+      "alt": ""
+    },
+    {
+      "id": "product-studio-1-6-png-29",
+      "w": 2048,
+      "h": 2048,
+      "alt": ""
     }
   ],
-  "updatedAt": "2026-07-03T12:21:01.963Z"
+  "updatedAt": "2026-07-03T12:21:30.989Z"
 }
