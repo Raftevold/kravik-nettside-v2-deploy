@@ -269,9 +269,7 @@
       "mapEmbed": "",
       "lat": 60.396500996913225,
       "lng": 5.329906021928492,
-      "images": [
-        "product-studio-1-6-png-31"
-      ]
+      "images": []
     },
     {
       "title": "Øvregaten 7, Bergen",
@@ -790,5 +788,5 @@
       "alt": ""
     }
   ],
-  "updatedAt": "2026-07-03T12:41:17.668Z"
+  "updatedAt": "2026-07-03T12:51:26.549Z"
 }
