@@ -311,7 +311,8 @@
     {
       "quote": "Heilt fantastisk samarbeid! Renovering av bad. Resultatet vart fantastisk!",
       "author": "Adrian Lefdal",
-      "context": "Oppussing"
+      "context": "Oppussing",
+      "rating": 5
     }
   ],
   "gallery": [
@@ -840,5 +841,5 @@
       "alt": ""
     }
   ],
-  "updatedAt": "2026-07-03T16:43:52.127Z"
+  "updatedAt": "2026-07-03T16:50:29.436Z"
 }
