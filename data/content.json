@@ -262,7 +262,11 @@
     {
       "title": "Øvre Fjellsmauet 8, Bergen",
       "slug": "ovre-fjellsmauet-8-bergen",
-      "image": "leilegheit-1"
+      "image": "leilegheit-1",
+      "status": "ledig",
+      "description": "kom å sjå i kveld!",
+      "facts": [],
+      "mapEmbed": ""
     },
     {
       "title": "Øvregaten 7, Bergen",
@@ -769,5 +773,5 @@
       "alt": ""
     }
   ],
-  "updatedAt": "2026-07-03T12:21:52.983Z"
+  "updatedAt": "2026-07-03T12:23:29.250Z"
 }
