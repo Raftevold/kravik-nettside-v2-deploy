@@ -20,7 +20,7 @@
 | **Kontaktpersonar** | Folk med telefon/e-post (vist på Om oss + Kontakt) |
 | **Bilete og galleri** | Last opp (auto-komprimering), alt-tekst, slett, galleri av/på |
 | **Referansar** | Kundeomtalar (vist på framsida når minst éin finst) |
-| **Leilegheiter** | Utvalet på eigedomssida |
+| **Leilegheiter** | Adresse med autoforslag frå Kartverket (kartet på sida kjem automatisk), fleire bilete per leilegheit med val av framsidebilete, status, beskriving og nøkkelinfo |
 | **Varsellinje** | Smal melding øvst på alle sider – av/på, tekst og valfri lenkje |
 | **Kontaktinfo m.m.** | Adresse, telefon, e-post, org.nr, avdelingar, opningstider, sosiale medium, kart |
 | **Innstillingar** | Byt passord, sikkerheitskopi (eksport/import), teknisk status |

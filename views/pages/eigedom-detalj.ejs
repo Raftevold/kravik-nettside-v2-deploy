@@ -14,8 +14,22 @@
 <section class="seksjon">
   <div class="ramme delt">
     <div>
-      <% if (e.image) { %>
-      <img class="eigedom-hovudbilete" src="<%= mediaUrl(e.image, 'lg') %>" srcset="<%= srcset(e.image) %>" sizes="(min-width: 800px) 60vw, 95vw" alt="<%= mediaAlt(e.image) || e.title %>" />
+      <% const framside = e.cover || e.image;
+         const fleireBilete = [...new Set([...(e.images || []), ...(e.image ? [e.image] : [])])].filter((id) => id !== framside);
+         const kartSrc = e.mapEmbed || (e.lat && e.lng ? `https://www.google.com/maps?q=${e.lat},${e.lng}&z=16&output=embed` : ''); %>
+      <% if (framside) { %>
+      <img class="eigedom-hovudbilete" src="<%= mediaUrl(framside, 'lg') %>" srcset="<%= srcset(framside) %>" sizes="(min-width: 800px) 60vw, 95vw" alt="<%= mediaAlt(framside) || e.title %>" />
+      <% } %>
+      <% if (fleireBilete.length) { %>
+      <ul class="galleri-rutenett eigedom-galleri">
+        <% for (const id of fleireBilete) { %>
+        <li>
+          <button type="button" class="galleri-knapp" data-lysbilete="<%= mediaUrl(id, 'lg') %>" data-alt="<%= mediaAlt(id) %>">
+            <img src="<%= mediaUrl(id, 'sm') %>" srcset="<%= srcset(id) %>" sizes="(min-width: 800px) 15vw, 30vw" alt="<%= mediaAlt(id) || 'Bilete av ' + e.title %>" loading="lazy" width="400" height="400" />
+          </button>
+        </li>
+        <% } %>
+      </ul>
       <% } %>
       <div class="brodtekst">
         <% if (e.description) { %>
@@ -30,9 +44,9 @@
         <% for (const f of e.facts) { %><div><dt><%= f.label %></dt><dd><%= f.value %></dd></div><% } %>
       </dl>
       <% } %>
-      <% if (e.mapEmbed) { %>
+      <% if (kartSrc) { %>
       <h2>Kart</h2>
-      <div class="kart-holdar" data-kart-src="<%= e.mapEmbed %>">
+      <div class="kart-holdar" data-kart-src="<%= kartSrc %>">
         <div class="kart-plasshaldar">
           <p>Kartet blir levert av Google Maps og blir først lasta når du samtykkjer til eksternt innhald.</p>
           <button type="button" class="knapp knapp-sekundar" data-last-kart>Vis kart</button>

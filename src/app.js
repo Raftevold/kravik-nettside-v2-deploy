@@ -61,8 +61,9 @@ function createApp() {
           styleSrc: ["'self'"],
           imgSrc: ["'self'", 'data:'],
           fontSrc: ["'self'"],
-          connectSrc: ["'self'", ...(PLAUSIBLE_DOMAIN ? ['https://plausible.io'] : [])],
-          frameSrc: ['https://www.google.com'],
+          // ws.geonorge.no: Kartverket sitt opne adresse-API (autoforslag i admin)
+          connectSrc: ["'self'", 'https://ws.geonorge.no', ...(PLAUSIBLE_DOMAIN ? ['https://plausible.io'] : [])],
+          frameSrc: ['https://www.google.com', 'https://maps.google.com'],
           objectSrc: ["'none'"],
           baseUri: ["'self'"],
           formAction: ["'self'"],

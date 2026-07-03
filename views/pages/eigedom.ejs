@@ -25,11 +25,11 @@
   <div class="ramme">
     <div class="seksjon-hovud"><h2 id="leil-tittel">Eit lite utval av leilegheitene våre</h2></div>
     <ul class="eigedom-rutenett">
-      <% for (const e of content.properties) { %>
+      <% for (const e of content.properties) { const framside = e.cover || e.image; %>
       <li class="eigedom-kort">
         <% if (e.slug) { %><a href="/eigedom/<%= e.slug %>"><% } %>
-        <% if (e.image) { %>
-        <img src="<%= mediaUrl(e.image, 'sm') %>" srcset="<%= srcset(e.image) %>" sizes="(min-width: 720px) 30vw, 90vw" alt="<%= mediaAlt(e.image) || e.title %>" loading="lazy" width="282" height="391" />
+        <% if (framside) { %>
+        <img src="<%= mediaUrl(framside, 'sm') %>" srcset="<%= srcset(framside) %>" sizes="(min-width: 720px) 30vw, 90vw" alt="<%= mediaAlt(framside) || e.title %>" loading="lazy" width="282" height="391" />
         <% } %>
         <h3><%= e.title %><% if (e.status) { %> <span class="status-merke status-<%= e.status %>"><%= e.status === 'ledig' ? 'Ledig' : 'Utleigd' %></span><% } %></h3>
         <% if (e.slug) { %></a><% } %>
