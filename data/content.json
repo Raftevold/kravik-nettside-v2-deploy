@@ -250,10 +250,13 @@
       "place": "Stryn",
       "year": "2020",
       "description": "Oppussing",
-      "cover": "",
+      "cover": "nyttt-bad",
       "before": "",
       "after": "",
-      "images": [],
+      "images": [
+        "nyttt-bad",
+        "gammelt-bad-2"
+      ],
       "id": "renovering-bad"
     }
   ],
@@ -823,7 +826,19 @@
       "w": 281,
       "h": 400,
       "alt": ""
+    },
+    {
+      "id": "nyttt-bad",
+      "w": 1408,
+      "h": 768,
+      "alt": ""
+    },
+    {
+      "id": "gammelt-bad-2",
+      "w": 1408,
+      "h": 768,
+      "alt": ""
     }
   ],
-  "updatedAt": "2026-07-03T16:43:22.597Z"
+  "updatedAt": "2026-07-03T16:43:37.535Z"
 }
