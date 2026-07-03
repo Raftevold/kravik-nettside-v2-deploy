@@ -1005,7 +1005,10 @@ a.varsellinje:hover { background: #8a3a0f; color: var(--kvit); text-decoration: 
 }
 
 /* Eigedom-detalj */
-.eigedom-hovudbilete { display: block; width: 100%; max-height: 480px; object-fit: cover; border-radius: var(--radius); margin-bottom: 1rem; }
+.eigedom-hovudknapp { border-radius: var(--radius); margin-bottom: 1rem; }
+.eigedom-hovudknapp img { aspect-ratio: auto; }
+.eigedom-hovudknapp:hover img { transform: none; }
+.eigedom-hovudbilete { display: block; width: 100%; max-height: 480px; object-fit: cover; border-radius: var(--radius); }
 .eigedom-galleri { grid-template-columns: repeat(auto-fill, minmax(min(120px, 28%), 1fr)); margin-bottom: 1.5rem; }
 .eigedom-fakta { max-width: 28rem; }
 

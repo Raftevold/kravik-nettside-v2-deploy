@@ -18,7 +18,10 @@
          const fleireBilete = [...new Set([...(e.images || []), ...(e.image ? [e.image] : [])])].filter((id) => id !== framside);
          const kartSrc = e.mapEmbed || (e.lat && e.lng ? `https://www.google.com/maps?q=${e.lat},${e.lng}&z=16&output=embed` : ''); %>
       <% if (framside) { %>
-      <img class="eigedom-hovudbilete" src="<%= mediaUrl(framside, 'lg') %>" srcset="<%= srcset(framside) %>" sizes="(min-width: 800px) 60vw, 95vw" alt="<%= mediaAlt(framside) || e.title %>" />
+      <button type="button" class="galleri-knapp eigedom-hovudknapp" data-lysbilete="<%= mediaUrl(framside, 'lg') %>" data-alt="<%= mediaAlt(framside) || e.title %>">
+        <img class="eigedom-hovudbilete" src="<%= mediaUrl(framside, 'lg') %>" srcset="<%= srcset(framside) %>" sizes="(min-width: 800px) 60vw, 95vw" alt="<%= mediaAlt(framside) || e.title %>" />
+        <span class="sr-only">Vis biletet i full storleik</span>
+      </button>
       <% } %>
       <% if (fleireBilete.length) { %>
       <ul class="galleri-rutenett eigedom-galleri">
