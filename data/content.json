@@ -343,6 +343,12 @@
       "author": "Kjell Ove Bergset",
       "context": "Google-omtale",
       "rating": 5
+    },
+    {
+      "quote": "Ein god butikk å handle hagemaskiner i.",
+      "author": "Ådne Sølvberg",
+      "context": "Google-omtale",
+      "rating": 4
     }
   ],
   "gallery": [
@@ -871,5 +877,5 @@
       "alt": ""
     }
   ],
-  "updatedAt": "2026-07-03T16:58:54.713Z"
+  "updatedAt": "2026-07-03T16:58:55.841Z"
 }
