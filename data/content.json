@@ -240,7 +240,20 @@
       "email": "hilde@kravik.no"
     }
   ],
-  "projects": [],
+  "projects": [
+    {
+      "title": "Baderom renovering",
+      "category": "Baderom",
+      "place": "Stryn",
+      "year": "2020",
+      "description": "sjå her dette vart bra",
+      "cover": "",
+      "before": "",
+      "after": "",
+      "images": [],
+      "id": "baderom-renovering"
+    }
+  ],
   "properties": [
     {
       "title": "Øvre Fjellsmauet 8, Bergen",
@@ -734,5 +747,5 @@
       "alt": ""
     }
   ],
-  "updatedAt": "2026-07-03T12:10:23.917Z"
+  "updatedAt": "2026-07-03T12:21:01.963Z"
 }
